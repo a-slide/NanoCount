@@ -56,6 +56,14 @@ class NanoCount_main ():
         self.convergence_target = convergence_target
         self.verbose = verbose
 
+        if self.verbose:
+            stderr_print ("Run parameters\n")
+            stderr_print ("\tMinimal read length:{}\n".format(min_read_length))
+            stderr_print ("\tMinimal aligned fraction of query read:{}\n".format(min_query_fraction_aligned))
+            stderr_print ("\tEquivalent threshold:{}\n".format(equivalent_threshold))
+            stderr_print ("\tScoring value:{}\n".format(scoring_value))
+            stderr_print ("\tConvergence target:{}\n".format(convergence_target))
+
         # Collect all hits grouped by read name
         if self.verbose:
             stderr_print ("Parse Bam file and filter low quality hits\n")
