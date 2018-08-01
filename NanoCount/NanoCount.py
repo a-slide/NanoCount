@@ -65,24 +65,20 @@ class NanoCount_main ():
             stderr_print ("\tConvergence target:{}\n".format(convergence_target))
 
         # Collect all hits grouped by read name
-        if self.verbose:
-            stderr_print ("Parse Bam file and filter low quality hits\n")
+        stderr_print ("Parse Bam file and filter low quality hits\n")
         self.read_dict = self._parse_bam ()
 
         # Generate compatibility dict grouped by reads
-        if self.verbose:
-            stderr_print ("Generate initial read/transcript compatibility index\n")
+        stderr_print ("Generate initial read/transcript compatibility index\n")
         self.compatibility_dict = self._get_compatibility ()
 
         # EM loop to calculate abundance and update read-transcript compatibility
-        if self.verbose:
-            stderr_print ("Start EM abundance estimate\n")
+        stderr_print ("Start EM abundance estimate\n")
         em_round = 0
 
         while True:
             em_round += 1
-            if self.verbose:
-                stderr_print (".")
+            stderr_print (".")
 
             # Calculate abundance from compatibility assignments
             self.abundance_dict = self._calculate_abundance (em_round)
