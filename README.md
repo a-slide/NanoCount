@@ -1,5 +1,9 @@
 # NanoCount
 
+[![GitHub license](https://img.shields.io/github/license/a-slide/NanoCount.svg)](https://github.com/a-slide/NanoCount/blob/master/LICENSE)
+[![PyPI version](https://badge.fury.io/py/NanoCount.svg)](https://badge.fury.io/py/NanoCount)
+[![Downloads](https://pepy.tech/badge/NanoCount)](https://pepy.tech/project/NanoCount)
+
 EM based transcript abundance from nanopore reads mapped to a transcriptome with minimap2
 Python package adapted from https://github.com/jts/nanopore-rna-analysis by Jared Simpson
 
@@ -99,7 +103,7 @@ Convergence target reached after 8 rounds
 Convergence value = 0.004801809595549253
 ```
 
-The count results are stored in a Pandas Dataframe that can be conveniently rendered in Jupyter 
+The count results are stored in a Pandas Dataframe that can be conveniently rendered in Jupyter
 ```python3
 display(n.count_df)
 ```
