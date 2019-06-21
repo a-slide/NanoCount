@@ -3,6 +3,7 @@
 [![GitHub license](https://img.shields.io/github/license/a-slide/NanoCount.svg)](https://github.com/a-slide/NanoCount/blob/master/LICENSE)
 [![PyPI version](https://badge.fury.io/py/NanoCount.svg)](https://badge.fury.io/py/NanoCount)
 [![Downloads](https://pepy.tech/badge/NanoCount)](https://pepy.tech/project/NanoCount)
+[![DOI](https://zenodo.org/badge/142873004.svg)](https://zenodo.org/badge/latestdoi/142873004)
 
 EM based transcript abundance from nanopore reads mapped to a transcriptome with minimap2
 Python package adapted from https://github.com/jts/nanopore-rna-analysis by Jared Simpson
