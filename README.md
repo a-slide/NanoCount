@@ -21,13 +21,12 @@ Ideally, before installation, create a clean python3 virtual environment to depl
 ### To install the package
 
 ```bash
-pip3 install git+https://github.com/a-slide/NanoCount.git
+pip3 install NanoCount
 ```
 
-### To update the package:
-
+or bleeding edge from github
 ```bash
-pip3 install git+https://github.com/a-slide/NanoCountbash.git --upgrade
+pip3 install git+https://github.com/a-slide/NanoCount.git
 ```
 
 # Usage
