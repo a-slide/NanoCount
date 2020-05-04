@@ -1,4 +1,4 @@
-![NanoCount](./docs/pictures/NanoCount.png)
+![NanoCount](pictures/NanoCount.png)
 
 [![GitHub license](https://img.shields.io/github/license/a-slide/NanoCount.svg)](https://github.com/a-slide/NanoCount/blob/master/LICENSE)
 [![Language](https://img.shields.io/badge/Language-Python3.6+-yellow.svg)](https://www.python.org/)
@@ -12,17 +12,28 @@
 
 ---
 
+# Welcome to NanoCount documentation
+
+---
+
 **NanoCount estimates transcripts abundance from Oxford Nanopore *direct-RNA sequencing* datasets, using an expectation-maximization approach like RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads**
 
----
+### Quick start
 
-**Documentation is available at https://a-slide.github.io/NanoCount/**
+#### Align reads
 
----
+Reads must be aligned a transcriptome reference using minimap2 with `-p 0 -N 10` options to retain up to 10 secondary mappings without filtering.
+NanoCount will take care of the low score alignments internally.  
 
-Please be aware that `NanoCount` is a research package that is still under development.
-The API, command line interface, and implementation might change without retro-compatibility.
+```
+minimap2 -t 4 -ax map-ont -p 0 -N 10 transcriptome.fa.gz reads.fastq.gz | samtools view -bh > aligned_reads.bam
+```
 
+#### Estimate transcripts abundance with NanoCount
+
+```
+NanoCount -i aligned_reads.bam -o transcript_counts.tsv
+```
 
 ### Citing
 
