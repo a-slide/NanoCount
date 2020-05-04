@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
 # Define self package variable
-__version__ = "0.1.a4"
+__version__ = "0.2.0"
 __all__ = ["NanoCount", "Read"]
-__description__ = 'EM based transcript abundance from nanopore reads mapped to a transcriptome with minimap2'
+__description__ = "EM based transcripts abundance estimation from nanopore reads mapped to a transcriptome with minimap2"

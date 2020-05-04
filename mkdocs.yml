@@ -1,0 +1,47 @@
+# Required python packages to generate the documentation
+# * mkdocs
+# * mkdocs-material
+# * pygments
+# * pymdown-extensions
+# * mknotebooks
+
+# Project information
+site_name: 'NanoCount'
+site_description: "EM based transcripts abundance estimation from nanopore reads mapped to a transcriptome with minimap2"
+site_author: 'Adrien Leger'
+site_url: 'https://a-slide.github.io/NanoCount/'
+
+# Repository
+repo_name: 'a-slide/NanoCount'
+repo_url: 'https://github.com/a-slide/NanoCount'
+
+# Copyright
+copyright: 'Copyright &copy; 2019 Adrien Leger'
+
+# Navigation menu
+nav:
+    - Home: index.md
+    - Installation instructions: installation.md
+    - Advanced usage:
+        - Input / Output files: nanocount_io.md
+        - Command Line interface: NanoCount_CLI_usage.ipynb
+        - Python API: NanoCount_API_usage.ipynb
+    - Contributing: contributing.md
+    - Code of conduct: code_of_conduct.md
+    - Licence: licence.md
+    - Changelog: changelog.md
+
+# Theme customization
+theme:
+    name: 'material'
+    highlightjs: true
+    font: false
+
+markdown_extensions:
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: a-slide
+      repo: NanoCount
+
+plugins:
+  - mknotebooks

@@ -5,49 +5,40 @@
 
 # Standard library imports
 import argparse
-from collections import *
 
 # Local imports
-from NanoCount import __version__ as package_version
-from NanoCount import __name__ as package_name
-from NanoCount import __description__ as package_description
+import NanoCount as pkg
 from NanoCount.NanoCount import NanoCount as nc
+from NanoCount.common import *
 
 #~~~~~~~~~~~~~~MAIN PARSER ENTRY POINT~~~~~~~~~~~~~~#
 
 def main(args=None):
 
     # Define parser
-    parser = argparse.ArgumentParser(description=package_description)
-    parser.add_argument('--version', '-v', action='version', version="{} v{}".format(package_name, package_version))
-    parser.add_argument('-i', '--alignment_file', type=str, required=True,
-        help="BAM or SAM file containing aligned ONT dRNA-Seq reads including secondary and supplementary alignment")
-    parser.add_argument('-o', '--count_file', type=str, required=True,
-        help="Output count file")
-    parser.add_argument('--min_read_length', type=int, default=50,
-        help="Minimal length of the read to be considered valid")
-    parser.add_argument('--min_query_fraction_aligned', type=float, default=0.5,
-        help="Minimal fraction of the primary hit query aligned to consider the read valid")
-    parser.add_argument('--equivalent_threshold', type=float, default=0.9,
-        help="Fraction of the alignment score or the alignment length of secondary hits compared to the primary hit to be considered valid hits")
-    parser.add_argument('--scoring_value', type=str, default="alignment_score",
-        help="Value to use for score thresholding of secondary hits. Either alignment_score or alignment_length")
-    parser.add_argument('--convergence_target', type=float, default=0.005,
-        help="Convergence target value of the cummulative difference between abundance values of successive EM round to trigger the end of the EM loop")
-    parser.add_argument('--verbose', default=False, action='store_true',
-        help="If True will be chatty")
+    parser = argparse.ArgumentParser (description=pkg.__description__)
+    parser.add_argument("--version", action="version", version="{} v{}".format(pkg.__name__, pkg.__version__))
+
+    parser_io = parser.add_argument_group("Input/Output options")
+    arg_from_docstr(parser=parser_io, func=nc, arg_name="alignment_file", short_name="i")
+    arg_from_docstr(parser=parser_io, func=nc, arg_name="count_file", short_name="o")
+
+    parser_ms = parser.add_argument_group("Misc options")
+    arg_from_docstr(parser=parser_ms, func=nc, arg_name="min_read_length", short_name="l")
+    arg_from_docstr(parser=parser_ms, func=nc, arg_name="min_query_fraction_aligned", short_name="f")
+    arg_from_docstr(parser=parser_ms, func=nc, arg_name="equivalent_threshold", short_name="t")
+    arg_from_docstr(parser=parser_ms, func=nc, arg_name="scoring_value", short_name="s")
+    arg_from_docstr(parser=parser_ms, func=nc, arg_name="convergence_target", short_name="c")
+    arg_from_docstr(parser=parser_ms, func=nc, arg_name="max_em_rounds", short_name="e")
+    arg_from_docstr(parser=parser_ms, func=nc, arg_name="extra_tx_info", short_name="x")
+
+    parser_vb = parser.add_argument_group("Verbosity options")
+    arg_from_docstr(parser=parser_vb, func=nc, arg_name="verbose", short_name="v")
+    arg_from_docstr(parser=parser_vb, func=nc, arg_name="quiet", short_name="q")
+
+    # Parse args and run main function
     args = parser.parse_args()
-
-    nanocount = nc (
-        alignment_file =args.alignment_file,
-        min_read_length =args.min_read_length,
-        min_query_fraction_aligned =args.min_query_fraction_aligned,
-        equivalent_threshold =args.equivalent_threshold,
-        scoring_value =args.scoring_value,
-        convergence_target =args.convergence_target,
-        verbose =args.verbose)
-
-    nanocount.write_count_file (args.count_file)
+    nanocount = nc (**vars(args))
 
 # execute only if run as a script
 if __name__ == "__main__":

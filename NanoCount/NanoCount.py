@@ -8,6 +8,7 @@ from collections import *
 # Third party imports
 import pysam
 import pandas as pd
+from tqdm import tqdm
 
 # Local imports
 from NanoCount.Read import Read
@@ -18,109 +19,118 @@ class NanoCount ():
 
     #~~~~~~~~~~~~~~MAGIC METHODS~~~~~~~~~~~~~~#
     def __init__ (self,
-        alignment_file,
-        min_read_length = 50,
-        min_query_fraction_aligned = 0.5,
-        equivalent_threshold = 0.9,
-        scoring_value = "alignment_score",
-        convergence_target = 0.005,
-        verbose = False):
+        alignment_file:str,
+        count_file:str="",
+        min_read_length:int = 50,
+        min_query_fraction_aligned:float = 0.5,
+        equivalent_threshold:float = 0.9,
+        scoring_value:str = "alignment_score",
+        convergence_target:float = 0.005,
+        max_em_rounds:int = 100,
+        extra_tx_info:bool = False,
+        verbose:bool = False,
+        quiet:bool = False):
         """
+        Estimate abundance of transcripts using an EM
         * alignment_file
-            BAM or SAM file containing aligned ONT dRNA-Seq reads including
-            secondary and supplementary alignment
-        * min_read_length INT
+            BAM or SAM file containing aligned ONT dRNA-Seq reads including secondary and supplementary alignment
+        * count_file
+            Output file path where to write estimated counts (TSV format)
+        * min_read_length
             Minimal length of the read to be considered valid
-        * min_query_fraction_aligned FLOAT
-            Minimal fraction of the primary hit query aligned to consider the
-            read valid
-        * equivalent_threshold FLOAT
-            Fraction of the alignment score or the alignment length of secondary
-            hits compared to the primary hit to be considered valid hits
-        * scoring_value STR
-            Value to use for score thresholding of secondary hits
-            Either "alignment_score" or "alignment_length"
-        * convergence_target FLOAT
-            Convergence target value of the cummulative difference between
-            abundance values of successive EM round to trigger the end of the
-            EM loop.
+        * min_query_fraction_aligned
+            Minimal fraction of the primary hit query aligned to consider the read valid
+        * equivalent_threshold
+            Fraction of the alignment score or the alignment length of secondary hits compared to the primary hit to be considered valid hits
+        * scoring_value
+            Value to use for score thresholding of secondary hits either "alignment_score" or "alignment_length"
+        * convergence_target
+            Convergence target value of the cummulative difference between abundance values of successive EM round to trigger the end of the EM loop.
+        * max_em_rounds
+            Maximum number of EM rounds before triggering stop
+        * extra_tx_info
+            Add transcripts length and zero coverage transcripts to the output file (required valid bam/sam header)
+        * verbose
+            Increase verbosity for QC and debugging
+        * quiet
+            Reduce verbosity
         """
+
+        # Init package
+        opt_summary_dict = opt_summary(local_opt=locals())
+        self.log = get_logger (name="Nanocount", verbose=verbose, quiet=quiet)
+
+        self.log.warning("Checking options and input files")
+        log_dict(opt_summary_dict, self.log.debug, "Options summary")
+
         # Save args in self variables
         self.alignment_file = alignment_file
+        self.count_file = count_file
         self.min_read_length = min_read_length
         self.min_query_fraction_aligned = min_query_fraction_aligned
         self.equivalent_threshold = equivalent_threshold
         self.scoring_value = scoring_value
         self.convergence_target = convergence_target
-        self.verbose = verbose
+        self.max_em_rounds = max_em_rounds
+        self.extra_tx_info = extra_tx_info
 
-        if self.verbose:
-            stderr_print ("Run parameters\n")
-            stderr_print ("\tMinimal read length:{}\n".format(min_read_length))
-            stderr_print ("\tMinimal aligned fraction of query read:{}\n".format(min_query_fraction_aligned))
-            stderr_print ("\tEquivalent threshold:{}\n".format(equivalent_threshold))
-            stderr_print ("\tScoring value:{}\n".format(scoring_value))
-            stderr_print ("\tConvergence target:{}\n".format(convergence_target))
+        self.log.warning("Initialise Nanocount")
 
         # Collect all hits grouped by read name
-        stderr_print ("Parse Bam file and filter low quality hits\n")
+        self.log.info ("Parse Bam file and filter low quality hits")
         self.read_dict = self._parse_bam ()
 
         # Generate compatibility dict grouped by reads
-        stderr_print ("Generate initial read/transcript compatibility index\n")
+        self.log.info ("Generate initial read/transcript compatibility index")
         self.compatibility_dict = self._get_compatibility ()
 
         # EM loop to calculate abundance and update read-transcript compatibility
-        stderr_print ("Start EM abundance estimate\n")
-        em_round = 0
+        self.log.warning ("Start EM abundance estimate")
 
-        while True:
-            em_round += 1
-            stderr_print (".")
+        self.em_round = 0
+        self.convergence = 1
 
-            # Calculate abundance from compatibility assignments
-            self.abundance_dict = self._calculate_abundance (em_round)
+        with tqdm (unit=" rounds", unit_scale=True, desc="\tProgress", disable=(quiet or verbose)) as pbar:
+            # Iterate until convergence threshold or max EM round are reached
+            while self.convergence > self.convergence_target and self.em_round < self.max_em_rounds:
+                self.em_round += 1
+                # Calculate abundance from compatibility assignments
+                self.abundance_dict = self._calculate_abundance()
+                # Update compatibility assignments
+                self.compatibility_dict = self._update_compatibility()
+                # Update counter
+                pbar.update(1)
+                self.log.debug ("EM Round: {} / Convergence value: {}".format(self.em_round, self.convergence))
 
-            # Trigger stop if convergence reached
-            if self.convergence <= self.convergence_target:
-                if self.verbose:
-                    stderr_print ("\nConvergence target reached after {} rounds\n".format (em_round))
-                    stderr_print ("Convergence value = {}\n".format(self.convergence))
-                break
+        self.log.info ("Exit EM loop after {} rounds".format (self.em_round))
+        self.log.info ("Convergence value: {}".format(self.convergence))
+        if not self.convergence <= self.convergence_target:
+            self.log.error ("Convergence target ({}) could not be reached after {} rounds".format(self.convergence_target, self.max_em_rounds))
 
-            # Failsafe if convergence not reached
-            if em_round == 100:
-                if self.verbose:
-                    stderr_print ("\nCannot reach convergence after 100 rounds\n")
-                    stderr_print ("Convergence value = {}\n".format(self.convergence))
-                break
+        # Write out results
+        self.log.warning ("Summarize data")
 
-            # Update compatibility assignments
-            self.compatibility_dict = self._update_compatibility ()
+        self.log.info ("Convert results to dataframe")
+        self.count_df = pd.DataFrame (self.abundance_dict.most_common(), columns=["transcript_name","raw"])
+        self.count_df.set_index("transcript_name", inplace=True, drop=True)
 
-        # Final line
-        stderr_print("\n")
+        self.log.info ("Compute estimated counts and TPM")
+        self.count_df["est_count"] = self.count_df["raw"]*len(self.read_dict)
+        self.count_df["tpm"] = self.count_df["raw"] * 1000000
 
-    #~~~~~~~~~~~~~~PROPERTY METHODS~~~~~~~~~~~~~~#
-    @property
-    def count_df (self):
-        """
-        Transform abundance dict to a Dataframe contaning the estimated count and TPM per transcripts
-        """
-        df = pd.DataFrame (self.abundance_dict.most_common(), columns=["transcript_name","raw"])
-        df.set_index("transcript_name", inplace=True, drop=True)
-        df["est_count"] = df["raw"]*len(self.read_dict)
-        df["tpm"] = df["est_count"] * 1000000
-        return df
+        # Add extra transcript info is required
+        if self.extra_tx_info:
+            tx_df = self._get_tx_df()
+            self.count_df = pd.merge(self.count_df, tx_df, left_index=True, right_index=True, how="outer")
 
-    #~~~~~~~~~~~~~~PUBLIC METHODS~~~~~~~~~~~~~~#
-    def write_count_file (self, count_file):
-        """
-        Write the final count results to a given file
-        """
-        if self.verbose:
-            stderr_print ("Write output count file")
-        self.count_df.to_csv (count_file, sep="\t")
+        # Cleanup and sort
+        self.count_df.sort_values(by="raw", ascending=False, inplace=True)
+        self.count_df.fillna(value=0, inplace=True)
+        self.count_df.index.name = "transcript_name"
+
+        if self.count_file:
+            self.log.info ("Write file")
+            self.count_df.to_csv (self.count_file, sep="\t")
 
     #~~~~~~~~~~~~~~PRIVATE METHODS~~~~~~~~~~~~~~#
     def _parse_bam (self):
@@ -150,7 +160,9 @@ class NanoCount ():
 
             # In case the primary hit was removed by filters
             if best_hit:
-                if best_hit.qlen < self.min_read_length:
+                if best_hit.align_len == 0:
+                    c["Read with zero score"] +=1
+                elif best_hit.qlen < self.min_read_length:
                     c["Read too short"] +=1
                 elif best_hit.query_fraction_aligned < self.min_query_fraction_aligned:
                     c["Best hit with low query fraction aligned"] +=1
@@ -172,11 +184,11 @@ class NanoCount ():
                             c["Valid secondary hit"] += 1
                             filtered_read_dict [query_name].add_hit (hit)
 
-        # Write filtered reads counters
-        if self.verbose:
-            for i, j in c.items():
-                stderr_print ("\t{}:{}\n".format(i,j))
+        if not "Valid secondary hit" in c:
+            self.log.error("No valid secondary hits found in bam file. Were the reads aligned with minimap -p 0 option ?")
 
+        # Write filtered reads counters
+        log_dict (d=c, logger=self.log.debug, header="Summary of reads parsed in input bam file")
         return filtered_read_dict
 
     def _get_compatibility (self):
@@ -189,7 +201,7 @@ class NanoCount ():
 
         return compatibility_dict
 
-    def _calculate_abundance (self, em_round):
+    def _calculate_abundance (self):
         """
         Calculate the abundance of the transcript set based on read-transcript compatibilities
         """
@@ -205,10 +217,10 @@ class NanoCount ():
         for ref_name in abundance_dict.keys():
             abundance_dict [ref_name] = abundance_dict[ref_name] / total
 
-            if em_round > 1:
+            if self.em_round > 1:
                 convergence += abs (self.abundance_dict [ref_name] - abundance_dict [ref_name])
 
-        if em_round == 1:
+        if self.em_round == 1:
             self.convergence = 1
         else:
             self.convergence = convergence
@@ -230,3 +242,17 @@ class NanoCount ():
                 compatibility_dict[read_name][ref_name] = self.abundance_dict [ref_name] / total
 
         return compatibility_dict
+
+    def _get_tx_df(self):
+        """
+        Extract transcript info from bam file header
+        """
+        try:
+            with pysam.AlignmentFile (self.alignment_file) as bam:
+                references = bam.references
+                lengths = bam.lengths
+
+            return pd.DataFrame(index=references, data=lengths, columns=["transcript_length"])
+        # If any error return empty DataFrame silently
+        except Exception:
+            return pd.DataFrame()
