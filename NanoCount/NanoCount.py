@@ -160,10 +160,12 @@ class NanoCount ():
 
             # In case the primary hit was removed by filters
             if best_hit:
-                if best_hit.align_len == 0:
-                    c["Read with zero score"] +=1
+                if best_hit.align_score == 0:
+                    c["Reads with zero score"] +=1
+                elif best_hit.align_len == 0:
+                    c["Reads with zero len"] +=1
                 elif best_hit.qlen < self.min_read_length:
-                    c["Read too short"] +=1
+                    c["Reads too short"] +=1
                 elif best_hit.query_fraction_aligned < self.min_query_fraction_aligned:
                     c["Best hit with low query fraction aligned"] +=1
                 else:
