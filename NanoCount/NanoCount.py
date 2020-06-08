@@ -28,6 +28,7 @@ class NanoCount ():
         convergence_target:float = 0.005,
         max_em_rounds:int = 100,
         extra_tx_info:bool = False,
+        primary_score:str = "",
         verbose:bool = False,
         quiet:bool = False):
         """
@@ -50,6 +51,9 @@ class NanoCount ():
             Maximum number of EM rounds before triggering stop
         * extra_tx_info
             Add transcripts length and zero coverage transcripts to the output file (required valid bam/sam header)
+        * primary_score
+            Method to pick the best alignment for each read. By default it uses the primary read defined by the aligner but it can be changed to use
+            either the best alignment score ("align_score") or the best alignment length ("align_len").
         * verbose
             Increase verbosity for QC and debugging
         * quiet
@@ -78,11 +82,11 @@ class NanoCount ():
 
         # Collect all hits grouped by read name
         self.log.info ("Parse Bam file and filter low quality hits")
-        self.read_dict = self._parse_bam ()
+        self.read_dict = self._parse_bam(primary_score=primary_score)
 
         # Generate compatibility dict grouped by reads
         self.log.info ("Generate initial read/transcript compatibility index")
-        self.compatibility_dict = self._get_compatibility ()
+        self.compatibility_dict = self._get_compatibility()
 
         # EM loop to calculate abundance and update read-transcript compatibility
         self.log.warning ("Start EM abundance estimate")
@@ -133,14 +137,14 @@ class NanoCount ():
             self.count_df.to_csv (self.count_file, sep="\t")
 
     #~~~~~~~~~~~~~~PRIVATE METHODS~~~~~~~~~~~~~~#
-    def _parse_bam (self):
+    def _parse_bam (self, primary_score=""):
         """
         Parse Bam/Sam file, group hits per reads, filter reads based on
         selection criteria and return a dict of valid read/hits
         """
         # Parse bam files
-        c = Counter()
         read_dict = defaultdict (Read)
+        c = Counter()
         with pysam.AlignmentFile (self.alignment_file) as bam:
             for hit in bam:
                 if hit.is_unmapped:
@@ -151,12 +155,16 @@ class NanoCount ():
                     c["Mapped hits"] +=1
                     read_dict [hit.query_name].add_pysam_hit (hit)
 
+        # Write filtered reads counters
+        log_dict (d=c, logger=self.log.debug, header="Summary of reads parsed in input bam file")
+
         # Filter hits
         filtered_read_dict = defaultdict (Read)
+        c = Counter()
 
         for query_name, read in read_dict.items ():
             # Check if best hit is valid
-            best_hit = read.primary_hit
+            best_hit = read.get_primary_hit(primary_score=primary_score)
 
             # In case the primary hit was removed by filters
             if best_hit:
@@ -171,7 +179,7 @@ class NanoCount ():
                 else:
                     filtered_read_dict [query_name].add_hit (best_hit)
                     c["Valid best hit"] +=1
-                    for hit in read.secondary_hit_list:
+                    for hit in read.get_secondary_hit_list(primary_score=primary_score):
 
                         # Filter out secondary hits based on minimap alignment score
                         if self.scoring_value == "alignment_score" and hit.align_score/best_hit.align_score < self.equivalent_threshold:

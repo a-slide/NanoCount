@@ -19,6 +19,8 @@ class Read (object):
 
     #~~~~~~~~~~~~~~MAGIC METHODS~~~~~~~~~~~~~~#
     def __init__(self):
+        """
+        """
         self.hit_list = []
 
     def __repr__(self):
@@ -32,19 +34,37 @@ class Read (object):
     def n_hit (self):
         return len(self.hit_list)
 
-    @property
-    def primary_hit (self):
-        for hit in self.hit_list:
-            if not hit.secondary:
-                return hit
+    def get_primary_idx (self, primary_score=""):
 
-    @property
-    def secondary_hit_list (self):
-        hit_list = []
-        for hit in self.hit_list:
-            if hit.secondary:
-                hit_list.append (hit)
-        return hit_list
+        idx = 0
+        if not primary_score:
+            for i, hit in enumerate(self.hit_list):
+                if not hit.secondary:
+                    idx = i
+
+        elif primary_score == "align_score":
+            best_align_score = -1
+            for i, hit in enumerate(self.hit_list):
+                if hit.align_score > best_align_score:
+                    best_align_score = hit.align_score
+                    idx = i
+
+        elif primary_score == "align_len":
+            best_align_len = -1
+            for i, hit in enumerate(self.hit_list):
+                if hit.align_len > best_align_len:
+                    best_align_len = hit.align_len
+                    idx = i
+
+        return i
+
+    def get_primary_hit (self, primary_score=""):
+        primary_hit_idx = self.get_primary_idx(primary_score)
+        return self.hit_list[primary_hit_idx]
+
+    def get_secondary_hit_list (self, primary_score=""):
+        primary_hit_idx = self.get_primary_idx(primary_score)
+        return [hit for i, hit in enumerate(self.hit_list) if i != primary_hit_idx]
 
     #~~~~~~~~~~~~~~PUBLIC METHODS~~~~~~~~~~~~~~#
     def add_pysam_hit (self, pysam_aligned_segment, **kwargs):
@@ -77,5 +97,4 @@ class Hit ():
     #~~~~~~~~~~~~~~PROPERTY METHODS~~~~~~~~~~~~~~#
     @property
     def query_fraction_aligned (self):
-        if not self.secondary:
-            return self.align_len/self.qlen
+        return self.align_len/self.qlen

@@ -31,6 +31,7 @@ def main(args=None):
     arg_from_docstr(parser=parser_ms, func=nc, arg_name="convergence_target", short_name="c")
     arg_from_docstr(parser=parser_ms, func=nc, arg_name="max_em_rounds", short_name="e")
     arg_from_docstr(parser=parser_ms, func=nc, arg_name="extra_tx_info", short_name="x")
+    arg_from_docstr(parser=parser_ms, func=nc, arg_name="primary_score", short_name="p")
 
     parser_vb = parser.add_argument_group("Verbosity options")
     arg_from_docstr(parser=parser_vb, func=nc, arg_name="verbose", short_name="v")
