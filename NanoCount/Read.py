@@ -13,68 +13,63 @@ import pysam
 #~~~~~~~~~~~~~~CLASS READ~~~~~~~~~~~~~~#
 class Read (object):
     """
-    Represent a read from the original fastq file associated with hits found
+    Represent a read from the original fastq file associated with alignments found
     by minimap2
     """
 
     #~~~~~~~~~~~~~~MAGIC METHODS~~~~~~~~~~~~~~#
     def __init__(self):
-        """
-        """
-        self.hit_list = []
+        self.alignment_list = []
 
     def __repr__(self):
         m = ""
-        for r in self.hit_list:
+        for r in self.alignment_list:
             m +="\t\t{}\n".format(r)
         return (m)
 
     #~~~~~~~~~~~~~~PROPERTY METHODS~~~~~~~~~~~~~~#
     @property
-    def n_hit (self):
-        return len(self.hit_list)
-
-    def get_primary_idx (self, primary_score=""):
-
-        idx = 0
-        if not primary_score:
-            for i, hit in enumerate(self.hit_list):
-                if not hit.secondary:
-                    idx = i
-
-        elif primary_score == "align_score":
-            best_align_score = -1
-            for i, hit in enumerate(self.hit_list):
-                if hit.align_score > best_align_score:
-                    best_align_score = hit.align_score
-                    idx = i
-
-        elif primary_score == "align_len":
-            best_align_len = -1
-            for i, hit in enumerate(self.hit_list):
-                if hit.align_len > best_align_len:
-                    best_align_len = hit.align_len
-                    idx = i
-
-        return i
-
-    def get_primary_hit (self, primary_score=""):
-        primary_hit_idx = self.get_primary_idx(primary_score)
-        return self.hit_list[primary_hit_idx]
-
-    def get_secondary_hit_list (self, primary_score=""):
-        primary_hit_idx = self.get_primary_idx(primary_score)
-        return [hit for i, hit in enumerate(self.hit_list) if i != primary_hit_idx]
+    def n_alignment (self):
+        return len(self.alignment_list)
 
     #~~~~~~~~~~~~~~PUBLIC METHODS~~~~~~~~~~~~~~#
-    def add_pysam_hit (self, pysam_aligned_segment, **kwargs):
-        self.hit_list.append (Hit (pysam_aligned_segment))
+    def get_best_alignment (self, primary_score="primary"):
+        primary_alignment_idx = self._get_primary_idx(primary_score=primary_score)
+        return self.alignment_list[primary_alignment_idx]
 
-    def add_hit (self, hit, **kwargs):
-        self.hit_list.append (hit)
+    def get_secondary_alignments_list (self, primary_score="primary"):
+        primary_alignment_idx = self._get_primary_idx(primary_score=primary_score)
+        return [alignment for i, alignment in enumerate(self.alignment_list) if i != primary_alignment_idx]
+
+    def add_pysam_alignment (self, pysam_aligned_segment, **kwargs):
+        self.alignment_list.append (Alignment (pysam_aligned_segment))
+
+    def add_alignment (self, alignment, **kwargs):
+        self.alignment_list.append (alignment)
+
+    #~~~~~~~~~~~~~~PRIVATE METHODS~~~~~~~~~~~~~~#
+    def _get_primary_idx (self, primary_score="primary"):
+        idx = 0
+        if primary_score == "primary":
+            for i, alignment in enumerate(self.alignment_list):
+                if not alignment.secondary:
+                    idx = i
+        elif primary_score == "align_score":
+            best_align_score = -1
+            for i, alignment in enumerate(self.alignment_list):
+                if alignment.align_score > best_align_score:
+                    best_align_score = alignment.align_score
+                    idx = i
+        elif primary_score == "align_len":
+            best_align_len = -1
+            for i, alignment in enumerate(self.alignment_list):
+                if alignment.align_len > best_align_len:
+                    best_align_len = alignment.align_len
+                    idx = i
+        return idx
 
 #~~~~~~~~~~~~~~CLASS HIT~~~~~~~~~~~~~~#
-class Hit ():
+class Alignment ():
     """
     Helper class to extract relevant fields from the a pysam alignedSegment object
     """
