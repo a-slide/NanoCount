@@ -6,7 +6,7 @@ import NanoCount as package
 
 # Define package info
 name = "NanoCount"
-version = "0.2.2"
+version = "0.2.3"
 description = "EM based transcripts abundance estimation from nanopore reads mapped to a transcriptome with minimap2"
 with open("README.md", "r") as fh:
     long_description = fh.read()
