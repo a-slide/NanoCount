@@ -22,12 +22,16 @@ class NanoCount ():
         alignment_file:str,
         count_file:str="",
         min_read_length:int = 50,
+        discard_suplementary:bool = False,
         min_query_fraction_aligned:float = 0.5,
         equivalent_threshold:float = 0.9,
         scoring_value:str = "alignment_score",
         convergence_target:float = 0.005,
         max_em_rounds:int = 100,
         extra_tx_info:bool = False,
+        primary_score:str = "primary",
+        max_dist_3_prime:int = 100,
+        max_dist_5_prime:int = -1,
         verbose:bool = False,
         quiet:bool = False):
         """
@@ -39,17 +43,28 @@ class NanoCount ():
         * min_read_length
             Minimal length of the read to be considered valid
         * min_query_fraction_aligned
-            Minimal fraction of the primary hit query aligned to consider the read valid
+            Minimal fraction of the primary alignment query aligned to consider the read valid
         * equivalent_threshold
-            Fraction of the alignment score or the alignment length of secondary hits compared to the primary hit to be considered valid hits
+            Fraction of the alignment score or the alignment length of secondary alignments compared to the primary alignment to be considered valid
+            alignments
         * scoring_value
-            Value to use for score thresholding of secondary hits either "alignment_score" or "alignment_length"
+            Value to use for score thresholding of secondary alignments either "alignment_score" or "alignment_length"
         * convergence_target
             Convergence target value of the cummulative difference between abundance values of successive EM round to trigger the end of the EM loop.
         * max_em_rounds
             Maximum number of EM rounds before triggering stop
         * extra_tx_info
             Add transcripts length and zero coverage transcripts to the output file (required valid bam/sam header)
+        * primary_score
+            Method to pick the best alignment for each read. By default ("primary") it uses the primary read defined by the aligner but it can be changed to
+            use either the best alignment score ("align_score") or the best alignment length ("align_len"). choices = [primary, align_score, align_len]
+        * discard_suplementary
+            Discard any supplementary alignment. Otherwise they are considered like secondary alignments
+        * max_dist_3_prime
+            Maximum distance of alignment end to 3 prime of transcript. In ONT dRNA-Seq reads are assumed to start from the polyA tail (-1 to deactivate)
+        * max_dist_5_prime
+            Maximum distance of alignment start to 5 prime of transcript. In conjunction with max_dist_3_prime it can be used to select near full lenght reads
+            only (-1 to deactivate).
         * verbose
             Increase verbosity for QC and debugging
         * quiet
@@ -73,16 +88,20 @@ class NanoCount ():
         self.convergence_target = convergence_target
         self.max_em_rounds = max_em_rounds
         self.extra_tx_info = extra_tx_info
+        self.primary_score = primary_score
+        self.discard_suplementary = discard_suplementary
+        self.max_dist_5_prime = max_dist_5_prime
+        self.max_dist_3_prime = max_dist_3_prime
 
         self.log.warning("Initialise Nanocount")
 
-        # Collect all hits grouped by read name
-        self.log.info ("Parse Bam file and filter low quality hits")
-        self.read_dict = self._parse_bam ()
+        # Collect all alignments grouped by read name
+        self.log.info ("Parse Bam file and filter low quality alignments")
+        self.read_dict = self._parse_bam()
 
         # Generate compatibility dict grouped by reads
         self.log.info ("Generate initial read/transcript compatibility index")
-        self.compatibility_dict = self._get_compatibility ()
+        self.compatibility_dict = self._get_compatibility()
 
         # EM loop to calculate abundance and update read-transcript compatibility
         self.log.warning ("Start EM abundance estimate")
@@ -135,62 +154,80 @@ class NanoCount ():
     #~~~~~~~~~~~~~~PRIVATE METHODS~~~~~~~~~~~~~~#
     def _parse_bam (self):
         """
-        Parse Bam/Sam file, group hits per reads, filter reads based on
-        selection criteria and return a dict of valid read/hits
+        Parse Bam/Sam file, group alignments per reads, filter reads based on
+        selection criteria and return a dict of valid read/alignments
         """
         # Parse bam files
-        c = Counter()
         read_dict = defaultdict (Read)
+        ref_len_dict = OrderedDict()
+        c = Counter()
         with pysam.AlignmentFile (self.alignment_file) as bam:
-            for hit in bam:
-                if hit.is_unmapped:
-                    c["Unmapped hits"] +=1
-                elif hit.is_reverse:
-                    c["Wrong strand hits"] +=1
+
+            # Collect reference lengths in dict
+            for name, length in zip(bam.references, bam.lengths):
+                ref_len_dict[name]=length
+
+            for alignment in bam:
+                if alignment.is_unmapped:
+                    c["Discarded unmapped alignments"] +=1
+                elif alignment.is_reverse:
+                    c["Discarded negative strand alignments"] +=1
+                elif self.discard_suplementary and alignment.is_supplementary:
+                    c["Discarded supplementary alignments"] +=1
+                elif self.max_dist_3_prime>=0 and alignment.reference_end <= ref_len_dict[alignment.reference_name]-self.max_dist_3_prime:
+                    c["Discarded alignment with invalid 3 prime end"] +=1
+                elif self.max_dist_5_prime>=0 and alignment.reference_start >= self.max_dist_5_prime:
+                    c["Discarded alignment with invalid 5 prime end"] +=1
                 else:
-                    c["Mapped hits"] +=1
-                    read_dict [hit.query_name].add_pysam_hit (hit)
-
-        # Filter hits
-        filtered_read_dict = defaultdict (Read)
-
-        for query_name, read in read_dict.items ():
-            # Check if best hit is valid
-            best_hit = read.primary_hit
-
-            # In case the primary hit was removed by filters
-            if best_hit:
-                if best_hit.align_score == 0:
-                    c["Reads with zero score"] +=1
-                elif best_hit.align_len == 0:
-                    c["Reads with zero len"] +=1
-                elif best_hit.qlen < self.min_read_length:
-                    c["Reads too short"] +=1
-                elif best_hit.query_fraction_aligned < self.min_query_fraction_aligned:
-                    c["Best hit with low query fraction aligned"] +=1
-                else:
-                    filtered_read_dict [query_name].add_hit (best_hit)
-                    c["Valid best hit"] +=1
-                    for hit in read.secondary_hit_list:
-
-                        # Filter out secondary hits based on minimap alignment score
-                        if self.scoring_value == "alignment_score" and hit.align_score/best_hit.align_score < self.equivalent_threshold:
-                            c["Invalid secondary hit"] += 1
-
-                        # Filter out secondary hits based on minimap alignment length
-                        elif self.scoring_value == "alignment_length" and hit.align_len/best_hit.align_len < self.equivalent_threshold:
-                            c["Invalid secondary hit"] += 1
-
-                        # Select valid secondary hits
-                        else:
-                            c["Valid secondary hit"] += 1
-                            filtered_read_dict [query_name].add_hit (hit)
-
-        if not "Valid secondary hit" in c:
-            self.log.error("No valid secondary hits found in bam file. Were the reads aligned with minimap -p 0 option ?")
+                    c["Valid alignments"] +=1
+                    read_dict [alignment.query_name].add_pysam_alignment (alignment)
 
         # Write filtered reads counters
-        log_dict (d=c, logger=self.log.debug, header="Summary of reads parsed in input bam file")
+        log_dict (d=c, logger=self.log.info, header="Summary of alignments parsed in input bam file")
+
+        # Filter alignments
+        filtered_read_dict = defaultdict (Read)
+        c = Counter()
+
+        for query_name, read in read_dict.items ():
+            # Check if best alignment is valid
+            best_alignment = read.get_best_alignment(primary_score=self.primary_score)
+
+            # In case the primary alignment was removed by filters
+            if best_alignment:
+                if best_alignment.align_score == 0:
+                    c["Reads with zero score"] +=1
+                elif best_alignment.align_len == 0:
+                    c["Reads with zero len"] +=1
+                elif best_alignment.qlen < self.min_read_length:
+                    c["Reads too short"] +=1
+                elif best_alignment.query_fraction_aligned < self.min_query_fraction_aligned:
+                    c["Reads with low query fraction aligned"] +=1
+                else:
+                    filtered_read_dict [query_name].add_alignment (best_alignment)
+                    c["Reads with valid best alignment"] +=1
+                    for alignment in read.get_secondary_alignments_list(primary_score=self.primary_score):
+
+                        # Filter out secondary alignments based on minimap alignment score
+                        if self.scoring_value == "alignment_score" and alignment.align_score/best_alignment.align_score < self.equivalent_threshold:
+                            c["Invalid secondary alignments"] += 1
+
+                        # Filter out secondary alignments based on minimap alignment length
+                        elif self.scoring_value == "alignment_length" and alignment.align_len/best_alignment.align_len < self.equivalent_threshold:
+                            c["Invalid secondary alignments"] += 1
+
+                        # Select valid secondary alignments
+                        else:
+                            c["Valid secondary alignments"] += 1
+                            filtered_read_dict [query_name].add_alignment (alignment)
+            else:
+                c["Reads without best alignment"] += 1
+
+        if not "Valid secondary alignments" in c:
+            self.log.error("No valid secondary alignments found in bam file. Were the reads aligned with minimap `-p 0 -N 10` options ?")
+
+        # Write filtered reads counters
+        log_dict (d=c, logger=self.log.info, header="Summary of reads filtered")
         return filtered_read_dict
 
     def _get_compatibility (self):
@@ -198,8 +235,8 @@ class NanoCount ():
         """
         compatibility_dict = defaultdict(dict)
         for read_name, read in self.read_dict.items ():
-            for hit in read.hit_list:
-                compatibility_dict[read_name][hit.rname] = score=1.0/read.n_hit
+            for alignment in read.alignment_list:
+                compatibility_dict[read_name][alignment.rname] = score=1.0/read.n_alignment
 
         return compatibility_dict
 
