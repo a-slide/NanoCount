@@ -5,7 +5,7 @@ site_author: __author_name__
 site_url: __package_doc_url__
 
 # Repository
-repo_name: 'a-slide/pyBioTools'
+repo_name: 'a-slide/NanoCount'
 repo_url: __package_url__
 
 # Copyright
@@ -22,8 +22,6 @@ nav:
     - Contributing: contributing.md
     - Code of conduct: code_of_conduct.md
     - Licence: licence.md
-    - Changelog: changelog.md
-
 
 # Theme customization
 theme:
