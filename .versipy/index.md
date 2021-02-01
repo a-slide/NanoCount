@@ -1,4 +1,4 @@
-# Welcome to NanoCount v0.2.3.dev1 documentation
+# Welcome to __package_name__ v__package_version__ documentation
 
 [NanoCount](pictures/NanoCount.png)
 
@@ -14,7 +14,7 @@
 
 ---
 
-**NanoCount estimates transcripts abundance from Oxford Nanopore *direct-RNA sequencing* datasets, using an expectation-maximization approach like RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads**
+**__package_description__**
 
 ---
 
@@ -44,19 +44,19 @@ NanoCount -i aligned_reads.bam -o transcript_counts.tsv
 
 ### citation
 
-The repository is archived at Zenodo. If you use NanoCount please cite as follow:
+The repository is archived at Zenodo. If you use __package_name__ please cite as follow:
 
-Adrien Leger. (2020, January 28). a-slide/NanoCount. Zenodo. https://zenodo.org/badge/latestdoi/142873004
+__citation__
 
 ### licence
 
-MIT (https://mit-license.org/)
+__package_licence__ (__package_licence_url__)
 
-Copyright © 2020 Adrien Leger
+Copyright © 2020 __author_name__
 
 ### Authors
 
-* Adrien Leger / aleg@ebi.ac.uk / https://adrienleger.com
+* __author_name__ / __author_email__ / __author_url__
 
 The package was inspired from https://github.com/jts/nanopore-rna-analysis by Jared Simpson
 

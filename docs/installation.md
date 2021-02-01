@@ -24,14 +24,7 @@ conda activate NanoCount
 
 [Minimap2](https://github.com/lh3/minimap2) is not a direct dependency but is required to generate the BAM alignment required by NanoCount.
 
-`NanoCount` relies on a the following robustly maintained third party python libraries:
-
-* pysam>=0.15.4
-* pandas>=1.0.3
-* tqdm>=4.46.0
-* colorlog>=4.1.0
-
-The correct versions of packages are installed together with the software when using pip or conda.
+`NanoCount` only relies on a few robustly maintained third party python libraries which are installed together with the software when using pip or conda.
 
 ## Option 1: Installation with pip from pypi (recommended)
 

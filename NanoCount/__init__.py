@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Define self package variable
-__version__ = "0.2.3"
-__all__ = ["NanoCount", "Read"]
-__description__ = "EM based transcripts abundance estimation from nanopore reads mapped to a transcriptome with minimap2"
+__name__ = "NanoCount"
+__version__ = "0.2.3.dev1"
+__description__ = "NanoCount estimates transcripts abundance from Oxford Nanopore *direct-RNA sequencing* datasets, using an expectation-maximization approach like RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads"
+__url__ = "https://github.com/a-slide/NanoCount/"
+__licence__ = "MIT"
+__author__ = "Adrien Leger"

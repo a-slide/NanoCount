@@ -1,4 +1,4 @@
-# NanoCount v0.2.3.dev1
+# __package_name__ v__package_version__
 
 ![NanoCount](./docs/pictures/NanoCount.png)
 
@@ -13,15 +13,15 @@
 [![Anaconda Downloads](https://anaconda.org/aleg/nanocount/badges/downloads.svg)](https://anaconda.org/aleg/nanocount)
 ---
 
-**NanoCount estimates transcripts abundance from Oxford Nanopore *direct-RNA sequencing* datasets, using an expectation-maximization approach like RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads**
+**__package_description__**
 
-Full documentation is available at https://adrienleger.com/NanoCount/
+Full documentation is available at __package_doc_url__
 
 ---
 
 ### Disclaimer
 
-Please be aware that NanoCount is a research package that is still under development.
+Please be aware that __package_name__ is a research package that is still under development.
 
 The API, command line interface, and implementation might change without retro-compatibility.
 
@@ -31,19 +31,19 @@ Thank you
 
 ### citation
 
-The repository is archived at Zenodo. If you use NanoCount please cite as follow:
+The repository is archived at Zenodo. If you use __package_name__ please cite as follow:
 
-Adrien Leger. (2020, January 28). a-slide/NanoCount. Zenodo. https://zenodo.org/badge/latestdoi/142873004
+__citation__
 
 ### licence
 
-MIT (https://mit-license.org/)
+__package_licence__ (__package_licence_url__)
 
-Copyright © 2020 Adrien Leger
+Copyright © 2020 __author_name__
 
 ### Authors
 
-* Adrien Leger / aleg@ebi.ac.uk / https://adrienleger.com
+* __author_name__ / __author_email__ / __author_url__
 
 The package was inspired from https://github.com/jts/nanopore-rna-analysis by Jared Simpson
 
@@ -51,8 +51,8 @@ The package was inspired from https://github.com/jts/nanopore-rna-analysis by Ja
 
 ### Classifiers
 
-* Development Status :: 3 - Alpha
-* Intended Audience :: Science/Research
-* Topic :: Scientific/Engineering :: Bio-Informatics
-* License :: OSI Approved :: MIT License
-* Programming Language :: Python :: 3
+* __classifiers_1__
+* __classifiers_2__
+* __classifiers_3__
+* __classifiers_4__
+* __classifiers_5__

@@ -257,7 +257,7 @@ class NanoCount ():
             abundance_dict [ref_name] = abundance_dict[ref_name] / total
 
             if self.em_round > 1:
-                convergence += abs (self.abundance_dict [ref_name] - abundance_dict [ref_name])
+                convergence += abs (self.abundance_dict[ref_name] - abundance_dict[ref_name])
 
         if self.em_round == 1:
             self.convergence = 1

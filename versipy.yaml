@@ -1,0 +1,41 @@
+version:
+  major: 0
+  minor: 2
+  micro: 3
+  a: null
+  b: null
+  rc: null
+  post: null
+  dev: 1
+managed_values:
+  __package_name__: NanoCount
+  __package_description__: NanoCount estimates transcripts abundance from Oxford Nanopore
+    *direct-RNA sequencing* datasets, using an expectation-maximization approach like
+    RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads
+  __package_url__: https://github.com/a-slide/NanoCount/
+  __package_doc_url__: https://adrienleger.com/NanoCount/
+  __author_name__: Adrien Leger
+  __author_email__: aleg@ebi.ac.uk
+  __author_url__: https://adrienleger.com
+  __package_licence__: MIT
+  __package_licence_url__: https://mit-license.org/
+  __minimal_python__: '>=3.6'
+  __entry_point1__: NanoCount=NanoCount.__main__:main
+  __dependency_1__: tqdm>=4.51.0
+  __dependency_2__: numpy>=1.19.4
+  __dependency_3__: pysam>=0.16.0
+  __dependency_4__: pandas>=1.1.4
+  __dependency_5__: colorlog>=4.1.0
+  __classifiers_1__: 'Development Status :: 3 - Alpha'
+  __classifiers_2__: 'Intended Audience :: Science/Research'
+  __classifiers_3__: 'Topic :: Scientific/Engineering :: Bio-Informatics'
+  __classifiers_4__: 'License :: OSI Approved :: MIT License'
+  __classifiers_5__: 'Programming Language :: Python :: 3'
+  __citation__: Adrien Leger. (2020, January 28). a-slide/NanoCount. Zenodo. https://zenodo.org/badge/latestdoi/142873004
+managed_files:
+  .versipy/setup.py: setup.py
+  .versipy/meta.yaml: meta.yaml
+  .versipy/__init__.py: NanoCount/__init__.py
+  .versipy/README.md: README.md
+  .versipy/mkdocs.yml: mkdocs.yml
+  .versipy/index.md: docs/index.md
