@@ -5,7 +5,7 @@ site_author: Adrien Leger
 site_url: https://adrienleger.com/NanoCount/
 
 # Repository
-repo_name: 'a-slide/pyBioTools'
+repo_name: 'a-slide/NanoCount'
 repo_url: https://github.com/a-slide/NanoCount/
 
 # Copyright
@@ -22,8 +22,6 @@ nav:
     - Contributing: contributing.md
     - Code of conduct: code_of_conduct.md
     - Licence: licence.md
-    - Changelog: changelog.md
-
 
 # Theme customization
 theme:

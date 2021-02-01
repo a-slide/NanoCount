@@ -1,4 +1,4 @@
-# Welcome to NanoCount v0.2.4 documentation
+# Welcome to NanoCount v0.2.4.post1 documentation
 
 [NanoCount](pictures/NanoCount.png)
 
@@ -37,7 +37,7 @@ NanoCount -i aligned_reads.bam -o transcript_counts.tsv
 
 ### Detailed instructions
 
-* [Installation](Installation)
+* [Installation](installation)
 * [Command line Usage](NanoCount_CLI_usage)
 * [Python API Usage](NanoCount_API_usage)
 * [Input / Output formats](nanocount_io)
