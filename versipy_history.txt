@@ -1,3 +1,4 @@
 2021-02-01 13:20:07.155938	0.0.0	Initialise versipy history
 2021-02-01 13:45:26.389692	0.2.3.dev1	initial setup
 2021-02-01 13:51:39.637405	0.2.3.dev2	First versipy assisted build
+2021-02-01 14:07:36.656610	0.2.3.dev3	update expired anaconda token
