@@ -1,4 +1,4 @@
-# NanoCount v0.2.3.dev3
+# NanoCount v0.2.4
 
 ![NanoCount](./docs/pictures/NanoCount.png)
 
