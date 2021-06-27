@@ -4,3 +4,4 @@
 2021-02-01 14:07:36.656610	0.2.3.dev3	update expired anaconda token
 2021-02-01 14:15:24.816310	0.2.4	First versipy assisted release
 2021-02-01 14:27:03.246990	0.2.4.post1	First versipy assisted release
+2021-06-27 15:53:25.265029	0.2.4.post1.dev1	hotfix and add bam output support
