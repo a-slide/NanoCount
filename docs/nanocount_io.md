@@ -49,3 +49,9 @@ YPR080W_mRNA    0.005222125833257228 457.49999999999926 5222.125833257228  1377
 tpm and estimated counts are not normalised by transcript length as it is usually done with Illumina data.
 The reason is that in dRNA-Seq one read is supposed to represent a single transcript molecule starting from the polyA tail, even if the fragment doesn't extend to the 5' end.
 If using a custom protocol allowing to sequence from internal RNA fragments (whole RNA tailing, degenerated custom adapter), then the prior is not verified any more.
+
+### Output BAM file
+
+Optionally, users can choose to dump the alignments selected by Nanocount for the transcripts
+estimate step, for QC or visualisation purpose. The alignments are written in the same order
+as the source BAM file.
