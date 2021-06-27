@@ -21,6 +21,7 @@ class NanoCount ():
     def __init__ (self,
         alignment_file:str,
         count_file:str="",
+        filter_bam_out:str="",
         min_read_length:int = 50,
         discard_suplementary:bool = False,
         min_query_fraction_aligned:float = 0.5,
@@ -40,6 +41,8 @@ class NanoCount ():
             BAM or SAM file containing aligned ONT dRNA-Seq reads including secondary and supplementary alignment
         * count_file
             Output file path where to write estimated counts (TSV format)
+        * filter_bam_out
+            Optional output file path where to write filtered reads selected by NanoCount to perform quantification estimation (BAM format)
         * min_read_length
             Minimal length of the read to be considered valid
         * min_query_fraction_aligned
@@ -63,7 +66,7 @@ class NanoCount ():
         * max_dist_3_prime
             Maximum distance of alignment end to 3 prime of transcript. In ONT dRNA-Seq reads are assumed to start from the polyA tail (-1 to deactivate)
         * max_dist_5_prime
-            Maximum distance of alignment start to 5 prime of transcript. In conjunction with max_dist_3_prime it can be used to select near full lenght reads
+            Maximum distance of alignment start to 5 prime of transcript. In conjunction with max_dist_3_prime it can be used to select near full transcript length reads
             only (-1 to deactivate).
         * verbose
             Increase verbosity for QC and debugging
@@ -81,6 +84,7 @@ class NanoCount ():
         # Save args in self variables
         self.alignment_file = alignment_file
         self.count_file = count_file
+        self.filter_bam_out = filter_bam_out
         self.min_read_length = min_read_length
         self.min_query_fraction_aligned = min_query_fraction_aligned
         self.equivalent_threshold = equivalent_threshold
@@ -98,6 +102,10 @@ class NanoCount ():
         # Collect all alignments grouped by read name
         self.log.info ("Parse Bam file and filter low quality alignments")
         self.read_dict = self._parse_bam()
+
+        if self.filter_bam_out:
+            self.log.info ("Write selected alignments to BAM file")
+            self._write_bam()
 
         # Generate compatibility dict grouped by reads
         self.log.info ("Generate initial read/transcript compatibility index")
@@ -167,7 +175,7 @@ class NanoCount ():
             for name, length in zip(bam.references, bam.lengths):
                 ref_len_dict[name]=length
 
-            for alignment in bam:
+            for idx, alignment in enumerate(bam):
                 if alignment.is_unmapped:
                     c["Discarded unmapped alignments"] +=1
                 elif alignment.is_reverse:
@@ -180,7 +188,9 @@ class NanoCount ():
                     c["Discarded alignment with invalid 5 prime end"] +=1
                 else:
                     c["Valid alignments"] +=1
-                    read_dict [alignment.query_name].add_pysam_alignment (alignment)
+                    read_dict [alignment.query_name].add_pysam_alignment (
+                        pysam_aligned_segment=alignment,
+                        read_idx=idx)
 
         # Write filtered reads counters
         log_dict (d=c, logger=self.log.info, header="Summary of alignments parsed in input bam file")
@@ -229,6 +239,30 @@ class NanoCount ():
         # Write filtered reads counters
         log_dict (d=c, logger=self.log.info, header="Summary of reads filtered")
         return filtered_read_dict
+
+    def _write_bam (self):
+        """
+        """
+        c = Counter()
+
+        # Make list of alignments idx to select
+        selected_read_idx = set()
+        for read in self.read_dict.values ():
+            for alignment in read.alignment_list:
+                selected_read_idx.add(alignment.read_idx)
+                c["Alignments to select"]+=1
+
+        # Select from original bam file and write to output bam file
+        with pysam.AlignmentFile (self.alignment_file) as bam_in:
+            with pysam.AlignmentFile (self.filter_bam_out, "wb", template=bam_in) as bam_out:
+                for read_idx, alignment in enumerate(bam_in):
+                    if read_idx in selected_read_idx:
+                        bam_out.write(alignment)
+                        c["Alignments written"]+=1
+                    else:
+                        c["Alignments skipped"]+=1
+
+        log_dict (d=c, logger=self.log.info, header="Summary of alignments written to bam")
 
     def _get_compatibility (self):
         """

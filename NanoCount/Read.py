@@ -41,8 +41,8 @@ class Read (object):
         primary_alignment_idx = self._get_primary_idx(primary_score=primary_score)
         return [alignment for i, alignment in enumerate(self.alignment_list) if i != primary_alignment_idx]
 
-    def add_pysam_alignment (self, pysam_aligned_segment, **kwargs):
-        self.alignment_list.append (Alignment (pysam_aligned_segment))
+    def add_pysam_alignment (self, pysam_aligned_segment, read_idx, **kwargs):
+        self.alignment_list.append (Alignment (pysam_aligned_segment, read_idx))
 
     def add_alignment (self, alignment, **kwargs):
         self.alignment_list.append (alignment)
@@ -75,7 +75,7 @@ class Alignment ():
     """
 
     #~~~~~~~~~~~~~~MAGIC METHODS~~~~~~~~~~~~~~#
-    def __init__(self, pysam_aligned_segment):
+    def __init__(self, pysam_aligned_segment, read_idx):
         """
         """
         self.qname = pysam_aligned_segment.query_name
@@ -84,6 +84,7 @@ class Alignment ():
         self.align_len = int (pysam_aligned_segment.query_alignment_length)
         self.align_score = int (pysam_aligned_segment.get_tag("AS"))
         self.secondary = pysam_aligned_segment.is_secondary or pysam_aligned_segment.is_supplementary
+        self.read_idx = read_idx
 
     def __repr__(self):
         return "Query:{} | Reference:{} | Query len:{} | Alignment len:{} | Align Score:{} | Secondary:{}".format(

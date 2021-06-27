@@ -22,6 +22,7 @@ def main(args=None):
     parser_io = parser.add_argument_group("Input/Output options")
     arg_from_docstr(parser=parser_io, func=nc, arg_name="alignment_file", short_name="i")
     arg_from_docstr(parser=parser_io, func=nc, arg_name="count_file", short_name="o")
+    arg_from_docstr(parser=parser_io, func=nc, arg_name="filter_bam_out", short_name="b")
 
     parser_ms = parser.add_argument_group("Misc options")
     arg_from_docstr(parser=parser_ms, func=nc, arg_name="min_read_length", short_name="l")
