@@ -5,3 +5,4 @@
 2021-02-01 14:15:24.816310	0.2.4	First versipy assisted release
 2021-02-01 14:27:03.246990	0.2.4.post1	First versipy assisted release
 2021-06-27 15:53:25.265029	0.2.4.post1.dev1	hotfix and add bam output support
+2021-06-27 16:03:50.092227	0.2.5	Hotfix and add BAM output support for internally selected alignments
