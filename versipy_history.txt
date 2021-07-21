@@ -7,3 +7,4 @@
 2021-06-27 15:53:25.265029	0.2.4.post1.dev1	hotfix and add bam output support
 2021-06-27 16:03:50.092227	0.2.5	Hotfix and add BAM output support for internally selected alignments
 2021-07-21 11:04:27.066661	0.2.5.dev1	Update default filtering options (non-retro-compatible)
+2021-07-21 11:11:11.160125	0.2.6	Update default filtering options (non-retro-compatible)
