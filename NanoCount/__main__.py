@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-#~~~~~~~~~~~~~~IMPORTS~~~~~~~~~~~~~~#
+# ~~~~~~~~~~~~~~IMPORTS~~~~~~~~~~~~~~ #
 
 # Standard library imports
 import argparse
@@ -11,12 +11,13 @@ import NanoCount as pkg
 from NanoCount.NanoCount import NanoCount as nc
 from NanoCount.common import *
 
-#~~~~~~~~~~~~~~MAIN PARSER ENTRY POINT~~~~~~~~~~~~~~#
+# ~~~~~~~~~~~~~~MAIN PARSER ENTRY POINT~~~~~~~~~~~~~~ #
+
 
 def main(args=None):
 
     # Define parser
-    parser = argparse.ArgumentParser (description=pkg.__description__)
+    parser = argparse.ArgumentParser(description=pkg.__description__)
     parser.add_argument("--version", action="version", version="{} v{}".format(pkg.__name__, pkg.__version__))
 
     parser_io = parser.add_argument_group("Input/Output options")
@@ -43,7 +44,8 @@ def main(args=None):
 
     # Parse args and run main function
     args = parser.parse_args()
-    nanocount = nc (**vars(args))
+    nanocount = nc(**vars(args))
+
 
 # execute only if run as a script
 if __name__ == "__main__":
