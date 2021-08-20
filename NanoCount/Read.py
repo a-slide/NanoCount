@@ -94,4 +94,7 @@ class Alignment:
     # ~~~~~~~~~~~~~~PROPERTY METHODS~~~~~~~~~~~~~~ #
     @property
     def query_fraction_aligned(self):
-        return self.align_len / self.qlen
+        if self.qlen == 0:
+            return 0
+        else:
+            return self.align_len / self.qlen
