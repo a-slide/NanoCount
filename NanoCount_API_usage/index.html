@@ -1,0 +1,1369 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="NanoCount estimates transcripts abundance from Oxford Nanopore *direct-RNA sequencing* datasets, using an expectation-maximization approach like RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads">
+      
+      
+      
+        <meta name="author" content="Adrien Leger">
+      
+      
+        <link rel="canonical" href="https://adrienleger.com/NanoCount/NanoCount_API_usage/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.4">
+    
+    
+      
+        <title>Python API - NanoCount</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.f7f47774.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+    
+    
+    
+      <link rel="stylesheet" href="../css/ansi-colours.css">
+    
+      <link rel="stylesheet" href="../css/jupyter-cells.css">
+    
+      <link rel="stylesheet" href="../css/pandas-dataframe.css">
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nanocount-python-api" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="NanoCount" class="md-header__button md-logo" aria-label="NanoCount" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            NanoCount
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Python API
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/a-slide/NanoCount/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    a-slide/NanoCount
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="NanoCount" class="md-nav__button md-logo" aria-label="NanoCount" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    NanoCount
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/a-slide/NanoCount/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    a-slide/NanoCount
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        Installation instructions
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      <label class="md-nav__link" for="__nav_3">
+        Advanced usage
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Advanced usage" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Advanced usage
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nanocount_io/" class="md-nav__link">
+        Input / Output files
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../NanoCount_CLI_usage/" class="md-nav__link">
+        Command Line interface
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Python API
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Python API
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#activate-virtual-environment" class="md-nav__link">
+    Activate virtual environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-nanocount" class="md-nav__link">
+    Running NanoCount
+  </a>
+  
+    <nav class="md-nav" aria-label="Running NanoCount">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-command" class="md-nav__link">
+    Basic command
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-best-alignment-score-rather-than-primary-reads-as-best-reads" class="md-nav__link">
+    Using Best Alignment score rather than Primary reads as best reads
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-selected-alignment-to-bam-file" class="md-nav__link">
+    Write selected alignment to BAM file
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-command-without-file-writing-and-dataframe-output" class="md-nav__link">
+    Basic command without file writing and Dataframe output
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-extra-transcripts-information" class="md-nav__link">
+    Adding extra transcripts information
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relaxing-the-secondary-alignment-scoring-threshold" class="md-nav__link">
+    Relaxing the secondary alignment scoring threshold
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        Contributing
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code_of_conduct/" class="md-nav__link">
+        Code of conduct
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../licence/" class="md-nav__link">
+        Licence
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#activate-virtual-environment" class="md-nav__link">
+    Activate virtual environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-nanocount" class="md-nav__link">
+    Running NanoCount
+  </a>
+  
+    <nav class="md-nav" aria-label="Running NanoCount">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-command" class="md-nav__link">
+    Basic command
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-best-alignment-score-rather-than-primary-reads-as-best-reads" class="md-nav__link">
+    Using Best Alignment score rather than Primary reads as best reads
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-selected-alignment-to-bam-file" class="md-nav__link">
+    Write selected alignment to BAM file
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-command-without-file-writing-and-dataframe-output" class="md-nav__link">
+    Basic command without file writing and Dataframe output
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-extra-transcripts-information" class="md-nav__link">
+    Adding extra transcripts information
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relaxing-the-secondary-alignment-scoring-threshold" class="md-nav__link">
+    Relaxing the secondary alignment scoring threshold
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/a-slide/NanoCount/edit/master/docs/NanoCount_API_usage.ipynb" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+(function() {
+  function addWidgetsRenderer() {
+    var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
+    var scriptElement = document.createElement('script');
+    var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';
+    var widgetState;
+
+    // Fallback for older version:
+    try {
+      widgetState = mimeElement && JSON.parse(mimeElement.innerHTML);
+
+      if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
+        widgetRendererSrc = 'jupyter-js-widgets@*/dist/embed.js';
+      }
+    } catch(e) {}
+
+    scriptElement.src = widgetRendererSrc;
+    document.body.appendChild(scriptElement);
+  }
+
+  document.addEventListener('DOMContentLoaded', addWidgetsRenderer);
+}());
+</script>
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="nanocount-python-api">NanoCount python API</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="activate-virtual-environment">Activate virtual environment</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+
+<pre><code class="language-python">from NanoCount.NanoCount import NanoCount
+from NanoCount.common import jhelp, head
+</code></pre>
+
+
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="running-nanocount">Running NanoCount</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+
+<pre><code class="language-python">jhelp(NanoCount)
+</code></pre>
+
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<p><strong>NanoCount</strong> (alignment_file, count_file, filter_bam_out, min_alignment_length, keep_suplementary, min_query_fraction_aligned, sec_scoring_threshold, sec_scoring_value, convergence_target, max_em_rounds, extra_tx_info, primary_score, max_dist_3_prime, max_dist_5_prime, verbose, quiet)</p>
+<p>Estimate abundance of transcripts using an EM</p>
+<hr>
+<ul>
+<li><strong>alignment_file</strong> (required) [str]</li>
+</ul>
+<p>BAM or SAM file containing aligned ONT dRNA-Seq reads including secondary and supplementary alignment</p>
+<ul>
+<li><strong>count_file</strong> (default: "") [str]</li>
+</ul>
+<p>Output file path where to write estimated counts (TSV format)</p>
+<ul>
+<li><strong>filter_bam_out</strong> (default: "") [str]</li>
+</ul>
+<p>Optional output file path where to write filtered reads selected by NanoCount to perform quantification estimation (BAM format)</p>
+<ul>
+<li><strong>min_alignment_length</strong> (default: 50) [int]</li>
+</ul>
+<p>Minimal length of the alignment to be considered valid</p>
+<ul>
+<li><strong>keep_suplementary</strong> (default: False) [bool]</li>
+</ul>
+<p>Retain any supplementary alignment and considered them like secondary alignments. discarded by default.</p>
+<ul>
+<li><strong>min_query_fraction_aligned</strong> (default: 0.5) [float]</li>
+</ul>
+<p>Minimal fraction of the primary alignment query aligned to consider the read valid</p>
+<ul>
+<li><strong>sec_scoring_threshold</strong> (default: 0.95) [float]</li>
+</ul>
+<p>Fraction of the alignment score or the alignment length of secondary alignments compared to the primary alignment to be considered valid alignments</p>
+<ul>
+<li><strong>sec_scoring_value</strong> (default: alignment_score) [str]</li>
+</ul>
+<p>Value to use for score thresholding of secondary alignments either "alignment_score" or "alignment_length"</p>
+<ul>
+<li><strong>convergence_target</strong> (default: 0.005) [float]</li>
+</ul>
+<p>Convergence target value of the cummulative difference between abundance values of successive EM round to trigger the end of the EM loop.</p>
+<ul>
+<li><strong>max_em_rounds</strong> (default: 100) [int]</li>
+</ul>
+<p>Maximum number of EM rounds before triggering stop</p>
+<ul>
+<li><strong>extra_tx_info</strong> (default: False) [bool]</li>
+</ul>
+<p>Add transcripts length and zero coverage transcripts to the output file (required valid bam/sam header)</p>
+<ul>
+<li><strong>primary_score</strong> (default: primary) [str]</li>
+</ul>
+<p>Method to pick the best alignment for each read. By default ("primary") it uses the primary read defined by the aligner but it can be changed to use either the best alignment score ("align_score") or the best alignment length ("align_len"). choices = [primary, align_score, align_len]</p>
+<ul>
+<li><strong>max_dist_3_prime</strong> (default: 50) [int]</li>
+</ul>
+<p>Maximum distance of alignment end to 3 prime of transcript. In ONT dRNA-Seq reads are assumed to start from the polyA tail (-1 to deactivate)</p>
+<ul>
+<li><strong>max_dist_5_prime</strong> (default: -1) [int]</li>
+</ul>
+<p>Maximum distance of alignment start to 5 prime of transcript. In conjunction with max_dist_3_prime it can be used to select near full transcript length reads only (-1 to deactivate).</p>
+<ul>
+<li><strong>verbose</strong> (default: False) [bool]</li>
+</ul>
+<p>Increase verbosity for QC and debugging</p>
+<ul>
+<li><strong>quiet</strong> (default: False) [bool]</li>
+</ul>
+<p>Reduce verbosity</p>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="basic-command">Basic command</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+
+<pre><code class="language-python">NanoCount (alignment_file=&quot;./data/aligned_reads_sorted.bam&quot;, count_file=&quot;./output/tx_counts.tsv&quot;)
+head(&quot;./output/tx_counts.tsv&quot;)
+</code></pre>
+
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+<code><span class="ansi-blue-intense-fg ansi-bold">## Checking options and input files ##</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Initialise Nanocount ##</span>
+<span class="ansi-green-fg">    Parse Bam file and filter low quality alignments</span>
+<span class="ansi-green-fg">    Summary of alignments parsed in input bam file</span>
+<span class="ansi-green-fg">        Valid alignments: 150,517</span>
+<span class="ansi-green-fg">        Discarded unmapped alignments: 9,545</span>
+<span class="ansi-green-fg">        Discarded alignment with invalid 3 prime end: 6,133</span>
+<span class="ansi-green-fg">        Discarded negative strand alignments: 4,515</span>
+<span class="ansi-green-fg">        Discarded supplementary alignments: 334</span>
+<span class="ansi-green-fg">    Summary of reads filtered</span>
+<span class="ansi-green-fg">        Reads with valid best alignment: 85,174</span>
+<span class="ansi-green-fg">        Invalid secondary alignments: 59,993</span>
+<span class="ansi-green-fg">        Valid secondary alignments: 2,618</span>
+<span class="ansi-green-fg">        Reads with low query fraction aligned: 2,362</span>
+<span class="ansi-green-fg">    Generate initial read/transcript compatibility index</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Start EM abundance estimate ##</span>
+    Progress: 2.00 rounds [00:00, 7.40 rounds/s]
+<span class="ansi-green-fg">    Exit EM loop after 2 rounds</span>
+<span class="ansi-green-fg">    Convergence value: 0.0019459404177855882</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Summarize data ##</span>
+<span class="ansi-green-fg">    Convert results to dataframe</span>
+<span class="ansi-green-fg">    Compute estimated counts and TPM</span>
+<span class="ansi-green-fg">    Write file</span>
+</code>
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>transcript_name raw                  est_count          tpm                
+YHR174W_mRNA    0.5931738182127508   50522.98679245284  593173.8182127508  
+YGR192C_mRNA    0.021012356886554624 1789.7064854554035 21012.356886554626 
+YLR110C_mRNA    0.009674313757719492 824.0              9674.313757719492  
+YOL086C_mRNA    0.008371099161716017 713.0              8371.099161716018  
+YKL060C_mRNA    0.006574776340197713 560.0              6574.776340197713  
+YPR080W_mRNA    0.005300913424284406 451.5              5300.913424284407  
+YBR118W_mRNA    0.005300913424284406 451.5              5300.913424284407  
+YLR044C_mRNA    0.005107192335689295 435.0              5107.192335689295  
+YKL152C_mRNA    0.004238382605020311 361.0              4238.3826050203115 
+
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="using-best-alignment-score-rather-than-primary-reads-as-best-reads">Using Best Alignment score rather than Primary reads as best reads</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+
+<pre><code class="language-python">NanoCount (alignment_file=&quot;./data/aligned_reads_sorted.bam&quot;, count_file=&quot;./output/tx_counts.tsv&quot;, primary_score=&quot;align_score&quot;)
+head(&quot;./output/tx_counts.tsv&quot;)
+</code></pre>
+
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+<code><span class="ansi-blue-intense-fg ansi-bold">## Checking options and input files ##</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Initialise Nanocount ##</span>
+<span class="ansi-green-fg">    Parse Bam file and filter low quality alignments</span>
+<span class="ansi-green-fg">    Summary of alignments parsed in input bam file</span>
+<span class="ansi-green-fg">        Valid alignments: 150,517</span>
+<span class="ansi-green-fg">        Discarded unmapped alignments: 9,545</span>
+<span class="ansi-green-fg">        Discarded alignment with invalid 3 prime end: 6,133</span>
+<span class="ansi-green-fg">        Discarded negative strand alignments: 4,515</span>
+<span class="ansi-green-fg">        Discarded supplementary alignments: 334</span>
+<span class="ansi-green-fg">    Summary of reads filtered</span>
+<span class="ansi-green-fg">        Reads with valid best alignment: 84,953</span>
+<span class="ansi-green-fg">        Invalid secondary alignments: 59,975</span>
+<span class="ansi-green-fg">        Reads with low query fraction aligned: 2,583</span>
+<span class="ansi-green-fg">        Valid secondary alignments: 2,262</span>
+<span class="ansi-green-fg">    Generate initial read/transcript compatibility index</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Start EM abundance estimate ##</span>
+    Progress: 2.00 rounds [00:00, 8.33 rounds/s]
+<span class="ansi-green-fg">    Exit EM loop after 2 rounds</span>
+<span class="ansi-green-fg">    Convergence value: 0.001906212433901406</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Summarize data ##</span>
+<span class="ansi-green-fg">    Convert results to dataframe</span>
+<span class="ansi-green-fg">    Compute estimated counts and TPM</span>
+<span class="ansi-green-fg">    Write file</span>
+</code>
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>transcript_name raw                   est_count          tpm                
+YHR174W_mRNA    0.5947169233864942    50522.98679245284  594716.9233864942  
+YGR192C_mRNA    0.021067019239525427  1789.7064854554035 21067.019239525427 
+YLR110C_mRNA    0.00969948088943298   824.0              9699.48088943298   
+YOL086C_mRNA    0.008392876060880723  713.0              8392.876060880722  
+YKL060C_mRNA    0.006591880216119501  560.0              6591.880216119501  
+YLR044C_mRNA    0.0051204783821642555 435.0              5120.478382164256  
+YPR080W_mRNA    0.004590773721940367  390.0              4590.773721940367  
+YBR118W_mRNA    0.004590773721940367  390.0              4590.773721940367  
+YKL152C_mRNA    0.00424940849646275   361.0              4249.40849646275   
+
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="write-selected-alignment-to-bam-file">Write selected alignment to BAM file</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+
+<pre><code class="language-python">NanoCount (
+    alignment_file=&quot;./data/aligned_reads_sorted.bam&quot;,
+    count_file=&quot;./output/tx_counts.tsv&quot;,
+    filter_bam_out = &quot;./output/aligned_reads_selected.bam&quot;,
+    primary_score=&quot;align_score&quot;)
+
+head(&quot;./output/tx_counts.tsv&quot;)
+</code></pre>
+
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+<code><span class="ansi-blue-intense-fg ansi-bold">## Checking options and input files ##</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Initialise Nanocount ##</span>
+<span class="ansi-green-fg">    Parse Bam file and filter low quality alignments</span>
+<span class="ansi-green-fg">    Summary of alignments parsed in input bam file</span>
+<span class="ansi-green-fg">        Valid alignments: 150,517</span>
+<span class="ansi-green-fg">        Discarded unmapped alignments: 9,545</span>
+<span class="ansi-green-fg">        Discarded alignment with invalid 3 prime end: 6,133</span>
+<span class="ansi-green-fg">        Discarded negative strand alignments: 4,515</span>
+<span class="ansi-green-fg">        Discarded supplementary alignments: 334</span>
+<span class="ansi-green-fg">    Summary of reads filtered</span>
+<span class="ansi-green-fg">        Reads with valid best alignment: 84,953</span>
+<span class="ansi-green-fg">        Invalid secondary alignments: 59,975</span>
+<span class="ansi-green-fg">        Reads with low query fraction aligned: 2,583</span>
+<span class="ansi-green-fg">        Valid secondary alignments: 2,262</span>
+<span class="ansi-green-fg">    Write selected alignments to BAM file</span>
+<span class="ansi-green-fg">    Summary of alignments written to bam</span>
+<span class="ansi-green-fg">        Alignments to select: 87,215</span>
+<span class="ansi-green-fg">        Alignments written: 87,215</span>
+<span class="ansi-green-fg">        Alignments skipped: 83,829</span>
+<span class="ansi-green-fg">    Generate initial read/transcript compatibility index</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Start EM abundance estimate ##</span>
+    Progress: 2.00 rounds [00:00, 8.20 rounds/s]
+<span class="ansi-green-fg">    Exit EM loop after 2 rounds</span>
+<span class="ansi-green-fg">    Convergence value: 0.001906212433901406</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Summarize data ##</span>
+<span class="ansi-green-fg">    Convert results to dataframe</span>
+<span class="ansi-green-fg">    Compute estimated counts and TPM</span>
+<span class="ansi-green-fg">    Write file</span>
+</code>
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>transcript_name raw                   est_count          tpm                
+YHR174W_mRNA    0.5947169233864942    50522.98679245284  594716.9233864942  
+YGR192C_mRNA    0.021067019239525427  1789.7064854554035 21067.019239525427 
+YLR110C_mRNA    0.00969948088943298   824.0              9699.48088943298   
+YOL086C_mRNA    0.008392876060880723  713.0              8392.876060880722  
+YKL060C_mRNA    0.006591880216119501  560.0              6591.880216119501  
+YLR044C_mRNA    0.0051204783821642555 435.0              5120.478382164256  
+YPR080W_mRNA    0.004590773721940367  390.0              4590.773721940367  
+YBR118W_mRNA    0.004590773721940367  390.0              4590.773721940367  
+YKL152C_mRNA    0.00424940849646275   361.0              4249.40849646275   
+
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="basic-command-without-file-writing-and-dataframe-output">Basic command without file writing and Dataframe output</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In interactive mode it is also possible not to write the results out but instead to access the data directly as a pandas DataFrame</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+
+<pre><code class="language-python">nc = NanoCount (alignment_file=&quot;./data/aligned_reads_sorted.bam&quot;)
+display(nc.count_df)
+</code></pre>
+
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+<code><span class="ansi-blue-intense-fg ansi-bold">## Checking options and input files ##</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Initialise Nanocount ##</span>
+<span class="ansi-green-fg">    Parse Bam file and filter low quality alignments</span>
+<span class="ansi-green-fg">    Summary of alignments parsed in input bam file</span>
+<span class="ansi-green-fg">        Valid alignments: 150,517</span>
+<span class="ansi-green-fg">        Discarded unmapped alignments: 9,545</span>
+<span class="ansi-green-fg">        Discarded alignment with invalid 3 prime end: 6,133</span>
+<span class="ansi-green-fg">        Discarded negative strand alignments: 4,515</span>
+<span class="ansi-green-fg">        Discarded supplementary alignments: 334</span>
+<span class="ansi-green-fg">    Summary of reads filtered</span>
+<span class="ansi-green-fg">        Reads with valid best alignment: 85,174</span>
+<span class="ansi-green-fg">        Invalid secondary alignments: 59,993</span>
+<span class="ansi-green-fg">        Valid secondary alignments: 2,618</span>
+<span class="ansi-green-fg">        Reads with low query fraction aligned: 2,362</span>
+<span class="ansi-green-fg">    Generate initial read/transcript compatibility index</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Start EM abundance estimate ##</span>
+    Progress: 2.00 rounds [00:00, 8.32 rounds/s]
+<span class="ansi-green-fg">    Exit EM loop after 2 rounds</span>
+<span class="ansi-green-fg">    Convergence value: 0.0019459404177855882</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Summarize data ##</span>
+<span class="ansi-green-fg">    Convert results to dataframe</span>
+<span class="ansi-green-fg">    Compute estimated counts and TPM</span>
+</code>
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_html rendered_html output_subarea ">
+<div>
+<style scoped="scoped">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>raw</th>
+      <th>est_count</th>
+      <th>tpm</th>
+    </tr>
+    <tr>
+      <th>transcript_name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+<tbody>
+    <tr>
+      <th>YHR174W_mRNA</th>
+      <td>5.931738e-01</td>
+      <td>50522.986792</td>
+      <td>593173.818213</td>
+    </tr>
+    <tr>
+      <th>YGR192C_mRNA</th>
+      <td>2.101236e-02</td>
+      <td>1789.706485</td>
+      <td>21012.356887</td>
+    </tr>
+    <tr>
+      <th>YLR110C_mRNA</th>
+      <td>9.674314e-03</td>
+      <td>824.000000</td>
+      <td>9674.313758</td>
+    </tr>
+    <tr>
+      <th>YOL086C_mRNA</th>
+      <td>8.371099e-03</td>
+      <td>713.000000</td>
+      <td>8371.099162</td>
+    </tr>
+    <tr>
+      <th>YKL060C_mRNA</th>
+      <td>6.574776e-03</td>
+      <td>560.000000</td>
+      <td>6574.776340</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>YDR433W_mRNA</th>
+      <td>2.348134e-06</td>
+      <td>0.200000</td>
+      <td>2.348134</td>
+    </tr>
+    <tr>
+      <th>YHL050C_mRNA</th>
+      <td>1.684879e-06</td>
+      <td>0.143508</td>
+      <td>1.684879</td>
+    </tr>
+    <tr>
+      <th>YPR204W_mRNA</th>
+      <td>1.684879e-06</td>
+      <td>0.143508</td>
+      <td>1.684879</td>
+    </tr>
+    <tr>
+      <th>YEL077C_mRNA</th>
+      <td>3.453139e-07</td>
+      <td>0.029412</td>
+      <td>0.345314</td>
+    </tr>
+    <tr>
+      <th>YOR248W_mRNA</th>
+      <td>1.834480e-07</td>
+      <td>0.015625</td>
+      <td>0.183448</td>
+    </tr>
+  </tbody>
+</table>
+<p>3040 rows × 3 columns</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="adding-extra-transcripts-information">Adding extra transcripts information</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>extra_tx_info</code> option adds a columns with the transcript lengths and also includes all the zero-coverage transcripts in the results   </p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+
+<pre><code class="language-python">nc = NanoCount (alignment_file=&quot;./data/aligned_reads_sorted.bam&quot;, extra_tx_info=True)
+display(nc.count_df)
+</code></pre>
+
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+<code><span class="ansi-blue-intense-fg ansi-bold">## Checking options and input files ##</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Initialise Nanocount ##</span>
+<span class="ansi-green-fg">    Parse Bam file and filter low quality alignments</span>
+<span class="ansi-green-fg">    Summary of alignments parsed in input bam file</span>
+<span class="ansi-green-fg">        Valid alignments: 150,517</span>
+<span class="ansi-green-fg">        Discarded unmapped alignments: 9,545</span>
+<span class="ansi-green-fg">        Discarded alignment with invalid 3 prime end: 6,133</span>
+<span class="ansi-green-fg">        Discarded negative strand alignments: 4,515</span>
+<span class="ansi-green-fg">        Discarded supplementary alignments: 334</span>
+<span class="ansi-green-fg">    Summary of reads filtered</span>
+<span class="ansi-green-fg">        Reads with valid best alignment: 85,174</span>
+<span class="ansi-green-fg">        Invalid secondary alignments: 59,993</span>
+<span class="ansi-green-fg">        Valid secondary alignments: 2,618</span>
+<span class="ansi-green-fg">        Reads with low query fraction aligned: 2,362</span>
+<span class="ansi-green-fg">    Generate initial read/transcript compatibility index</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Start EM abundance estimate ##</span>
+    Progress: 2.00 rounds [00:00, 7.95 rounds/s]
+<span class="ansi-green-fg">    Exit EM loop after 2 rounds</span>
+<span class="ansi-green-fg">    Convergence value: 0.0019459404177855882</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Summarize data ##</span>
+<span class="ansi-green-fg">    Convert results to dataframe</span>
+<span class="ansi-green-fg">    Compute estimated counts and TPM</span>
+</code>
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_html rendered_html output_subarea ">
+<div>
+<style scoped="scoped">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>raw</th>
+      <th>est_count</th>
+      <th>tpm</th>
+      <th>transcript_length</th>
+    </tr>
+    <tr>
+      <th>transcript_name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+<tbody>
+    <tr>
+      <th>YHR174W_mRNA</th>
+      <td>0.593174</td>
+      <td>50522.986792</td>
+      <td>593173.818213</td>
+      <td>1314</td>
+    </tr>
+    <tr>
+      <th>YGR192C_mRNA</th>
+      <td>0.021012</td>
+      <td>1789.706485</td>
+      <td>21012.356887</td>
+      <td>999</td>
+    </tr>
+    <tr>
+      <th>YLR110C_mRNA</th>
+      <td>0.009674</td>
+      <td>824.000000</td>
+      <td>9674.313758</td>
+      <td>402</td>
+    </tr>
+    <tr>
+      <th>YOL086C_mRNA</th>
+      <td>0.008371</td>
+      <td>713.000000</td>
+      <td>8371.099162</td>
+      <td>1047</td>
+    </tr>
+    <tr>
+      <th>YKL060C_mRNA</th>
+      <td>0.006575</td>
+      <td>560.000000</td>
+      <td>6574.776340</td>
+      <td>1080</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>YPR200C_mRNA</th>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>393</td>
+    </tr>
+    <tr>
+      <th>YPR201W_mRNA</th>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>1215</td>
+    </tr>
+    <tr>
+      <th>YPR202W_mRNA</th>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>717</td>
+    </tr>
+    <tr>
+      <th>YPR203W_mRNA</th>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>309</td>
+    </tr>
+    <tr>
+      <th>YPR204C-A_mRNA</th>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>483</td>
+    </tr>
+  </tbody>
+</table>
+<p>6612 rows × 4 columns</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="relaxing-the-secondary-alignment-scoring-threshold">Relaxing the secondary alignment scoring threshold</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The default value is 0.95 (95% of the alignment score of the primary alignment) but this value could be lowered to allow more secondary alignments to be included in the uncertainty calculation.
+Lowering the value bellow 0.75 might not be relevant and will considerably increase the computation time.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+
+<pre><code class="language-python">NanoCount (alignment_file=&quot;./data/aligned_reads_sorted.bam&quot;, count_file=&quot;./output/tx_counts.tsv&quot;, sec_scoring_threshold=0.8, extra_tx_info=True)
+head(&quot;./output/tx_counts.tsv&quot;)
+</code></pre>
+
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+<code><span class="ansi-blue-intense-fg ansi-bold">## Checking options and input files ##</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Initialise Nanocount ##</span>
+<span class="ansi-green-fg">    Parse Bam file and filter low quality alignments</span>
+<span class="ansi-green-fg">    Summary of alignments parsed in input bam file</span>
+<span class="ansi-green-fg">        Valid alignments: 150,517</span>
+<span class="ansi-green-fg">        Discarded unmapped alignments: 9,545</span>
+<span class="ansi-green-fg">        Discarded alignment with invalid 3 prime end: 6,133</span>
+<span class="ansi-green-fg">        Discarded negative strand alignments: 4,515</span>
+<span class="ansi-green-fg">        Discarded supplementary alignments: 334</span>
+<span class="ansi-green-fg">    Summary of reads filtered</span>
+<span class="ansi-green-fg">        Reads with valid best alignment: 85,174</span>
+<span class="ansi-green-fg">        Valid secondary alignments: 49,061</span>
+<span class="ansi-green-fg">        Invalid secondary alignments: 13,550</span>
+<span class="ansi-green-fg">        Reads with low query fraction aligned: 2,362</span>
+<span class="ansi-green-fg">    Generate initial read/transcript compatibility index</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Start EM abundance estimate ##</span>
+    Progress: 17.0 rounds [00:02, 6.18 rounds/s]
+<span class="ansi-green-fg">    Exit EM loop after 17 rounds</span>
+<span class="ansi-green-fg">    Convergence value: 0.004898135236430615</span>
+<span class="ansi-blue-intense-fg ansi-bold">## Summarize data ##</span>
+<span class="ansi-green-fg">    Convert results to dataframe</span>
+<span class="ansi-green-fg">    Compute estimated counts and TPM</span>
+<span class="ansi-green-fg">    Write file</span>
+</code>
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>transcript_name raw                   est_count          tpm               transcript_length 
+YHR174W_mRNA    0.5829682504382943    49653.737762831275 582968.2504382943 1314              
+YGR192C_mRNA    0.01511479453374923   1287.3875096175568 15114.79453374923 999               
+YGR254W_mRNA    0.01128586466687533   961.2622371364395  11285.86466687533 1314              
+YLR110C_mRNA    0.009674313757719525  824.0000000000028  9674.313757719525 402               
+YJR009C_mRNA    0.009499248602267904  809.0890004495665  9499.248602267904 999               
+YOL086C_mRNA    0.008371099161716045  713.0000000000024  8371.099161716045 1047              
+YKL060C_mRNA    0.0065747763401977355 560.0000000000019  6574.776340197735 1080              
+YBR118W_mRNA    0.005300913424284424  451.5000000000016  5300.913424284425 1377              
+YPR080W_mRNA    0.005300913424284424  451.5000000000016  5300.913424284425 1377              
+
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../NanoCount_CLI_usage/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Command Line interface" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Command Line interface
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../contributing/" class="md-footer__link md-footer__link--next" aria-label="Next: Contributing" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Contributing
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright © 2020 Adrien Leger
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.febc23d1.min.js"></script>
+      
+    
+  </body>
+</html>
