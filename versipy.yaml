@@ -6,7 +6,7 @@ version:
   b: null
   rc: null
   post: null
-  dev: 1
+  dev: 2
 managed_values:
   __package_name__: NanoCount
   __package_description__: NanoCount estimates transcripts abundance from Oxford Nanopore

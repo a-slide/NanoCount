@@ -1,4 +1,4 @@
-# Welcome to NanoCount v0.3.0.dev1 documentation
+# Welcome to NanoCount v0.3.0.dev2 documentation
 
 [NanoCount](pictures/NanoCount.png)
 
