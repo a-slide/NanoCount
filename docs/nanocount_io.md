@@ -4,18 +4,23 @@
 
 NanoCount is meant to be used with Oxford Nanopore **direct-RNA** sequencing datasets only.
 
-Reads must be aligned a **transcriptome reference** using **[minimap2](https://github.com/lh3/minimap2)** with `-p 0 -N 10` options to retain up to 10 secondary mappings.
+Reads must be aligned a **transcriptome reference** using **[minimap2](https://github.com/lh3/minimap2)** with `-N 10` options to retain up to 10 secondary mappings.
 For highly repetitive transcriptomes, this value can even be increased.
 
 Since we use a transcriptome reference the alignment algorithm does not have to be splice aware.
 
-Nanocount does not require reads to be sorted and can take either BAM or SAM format.
+Nanocount can take either BAM or SAM format and does not require reads to be sorted, although sorting the reads with samtools will make secondary sampling deterministic, so it is recommended.
 
-Here is an example minimap2 command line with optional conversion to BAM format with samtools:
+Here is an example minimap2 command line with optional conversion to BAM format with samtools then sorting and indexing with samtools.
 
 ```
-minimap2 -t 8 -ax map-ont -p 0 -N 10 ./data/yeast_ref.fa.gz ./data/yeast_reads.fastq.gz | samtools view -bh > ./output/aligned_reads.bam
+minimap2 -t 8 -ax map-ont -N 10 ./data/yeast_ref.fa.gz ./data/yeast_reads.fastq.gz | samtools view -bh > ./output/aligned_reads.bam
+
+samtools sort -o ./output/aligned_sorted_reads.bam ./output/aligned_reads.bam
+
+samtools index ./output/aligned_sorted_reads.bam
 ```
+
 
 ### Output TSV file
 
@@ -48,7 +53,7 @@ YPR080W_mRNA    0.005222125833257228 457.49999999999926 5222.125833257228  1377
 
 tpm and estimated counts are not normalised by transcript length as it is usually done with Illumina data.
 The reason is that in dRNA-Seq one read is supposed to represent a single transcript molecule starting from the polyA tail, even if the fragment doesn't extend to the 5' end.
-If using a custom protocol allowing to sequence from internal RNA fragments (whole RNA tailing, degenerated custom adapter), then the prior is not verified any more.
+If using a custom protocol allowing to sequence from internal RNA fragments (whole RNA tailing, degenerated custom adapter), then this prior is not verified any more.
 
 ### Output BAM file
 
