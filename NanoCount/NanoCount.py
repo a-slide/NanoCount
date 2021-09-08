@@ -23,15 +23,15 @@ class NanoCount:
         alignment_file: str,
         count_file: str = "",
         filter_bam_out: str = "",
-        min_read_length: int = 50,
-        discard_suplementary: bool = False,
+        min_alignment_length: int = 50,
+        keep_suplementary: bool = False,
         min_query_fraction_aligned: float = 0.5,
-        equivalent_threshold: float = 0.95,
-        scoring_value: str = "alignment_score",
+        sec_scoring_threshold: float = 0.95,
+        sec_scoring_value: str = "alignment_score",
         convergence_target: float = 0.005,
         max_em_rounds: int = 100,
         extra_tx_info: bool = False,
-        primary_score: str = "primary",
+        primary_score: str = "alignment_score",
         max_dist_3_prime: int = 50,
         max_dist_5_prime: int = -1,
         verbose: bool = False,
@@ -40,19 +40,19 @@ class NanoCount:
         """
         Estimate abundance of transcripts using an EM
         * alignment_file
-            BAM or SAM file containing aligned ONT dRNA-Seq reads including secondary and supplementary alignment
+            Sorted and indexed BAM or SAM file containing aligned ONT dRNA-Seq reads including secondary alignments
         * count_file
             Output file path where to write estimated counts (TSV format)
         * filter_bam_out
             Optional output file path where to write filtered reads selected by NanoCount to perform quantification estimation (BAM format)
-        * min_read_length
-            Minimal length of the read to be considered valid
+        * min_alignment_length
+            Minimal length of the alignment to be considered valid
         * min_query_fraction_aligned
             Minimal fraction of the primary alignment query aligned to consider the read valid
-        * equivalent_threshold
+        * sec_scoring_threshold
             Fraction of the alignment score or the alignment length of secondary alignments compared to the primary alignment to be considered valid
             alignments
-        * scoring_value
+        * sec_scoring_value
             Value to use for score thresholding of secondary alignments either "alignment_score" or "alignment_length"
         * convergence_target
             Convergence target value of the cummulative difference between abundance values of successive EM round to trigger the end of the EM loop.
@@ -61,14 +61,14 @@ class NanoCount:
         * extra_tx_info
             Add transcripts length and zero coverage transcripts to the output file (required valid bam/sam header)
         * primary_score
-            Method to pick the best alignment for each read. By default ("primary") it uses the primary read defined by the aligner but it can be changed to
-            use either the best alignment score ("align_score") or the best alignment length ("align_len"). choices = [primary, align_score, align_len]
-        * discard_suplementary
-            Discard any supplementary alignment. Otherwise they are considered like secondary alignments
+            Method to pick the best alignment for each read. By default ("alignment_score") uses the best alignment score (AS optional field), but it can be changed to
+            use either the primary alignment defined by the aligner ("primary") or the longest alignment ("alignment_length"). choices = [primary, alignment_score, alignment_length]
+        * keep_suplementary
+            Retain any supplementary alignments and considered them like secondary alignments. Discarded by default.
         * max_dist_3_prime
             Maximum distance of alignment end to 3 prime of transcript. In ONT dRNA-Seq reads are assumed to start from the polyA tail (-1 to deactivate)
         * max_dist_5_prime
-            Maximum distance of alignment start to 5 prime of transcript. In conjunction with max_dist_3_prime it can be used to select near full transcript length reads
+            Maximum distance of alignment start to 5 prime of transcript. In conjunction with max_dist_3_prime it can be used to select near full transcript reads
             only (-1 to deactivate).
         * verbose
             Increase verbosity for QC and debugging
@@ -87,15 +87,15 @@ class NanoCount:
         self.alignment_file = alignment_file
         self.count_file = count_file
         self.filter_bam_out = filter_bam_out
-        self.min_read_length = min_read_length
+        self.min_alignment_length = min_alignment_length
         self.min_query_fraction_aligned = min_query_fraction_aligned
-        self.equivalent_threshold = equivalent_threshold
-        self.scoring_value = scoring_value
+        self.sec_scoring_threshold = sec_scoring_threshold
+        self.sec_scoring_value = sec_scoring_value
         self.convergence_target = convergence_target
         self.max_em_rounds = max_em_rounds
         self.extra_tx_info = extra_tx_info
         self.primary_score = primary_score
-        self.discard_suplementary = discard_suplementary
+        self.keep_suplementary = keep_suplementary
         self.max_dist_5_prime = max_dist_5_prime
         self.max_dist_3_prime = max_dist_3_prime
 
@@ -187,8 +187,10 @@ class NanoCount:
                     c["Discarded unmapped alignments"] += 1
                 elif alignment.is_reverse:
                     c["Discarded negative strand alignments"] += 1
-                elif self.discard_suplementary and alignment.is_supplementary:
+                elif not self.keep_suplementary and alignment.is_supplementary:
                     c["Discarded supplementary alignments"] += 1
+                elif self.min_alignment_length > 0 and alignment.query_alignment_length < self.min_alignment_length:
+                    c["Discarded short alignments"] += 1
                 elif self.max_dist_3_prime >= 0 and alignment.reference_end <= ref_len_dict[alignment.reference_name] - self.max_dist_3_prime:
                     c["Discarded alignment with invalid 3 prime end"] += 1
                 elif self.max_dist_5_prime >= 0 and alignment.reference_start >= self.max_dist_5_prime:
@@ -218,8 +220,6 @@ class NanoCount:
                     c["Reads with zero score"] += 1
                 elif best_alignment.align_len == 0:
                     c["Reads with zero len"] += 1
-                elif best_alignment.qlen < self.min_read_length:
-                    c["Reads too short"] += 1
                 elif best_alignment.query_fraction_aligned < self.min_query_fraction_aligned:
                     c["Reads with low query fraction aligned"] += 1
                 else:
@@ -228,11 +228,11 @@ class NanoCount:
                     for alignment in read.get_secondary_alignments_list(primary_score=self.primary_score):
 
                         # Filter out secondary alignments based on minimap alignment score
-                        if self.scoring_value == "alignment_score" and alignment.align_score / best_alignment.align_score < self.equivalent_threshold:
+                        if self.sec_scoring_value == "alignment_score" and alignment.align_score / best_alignment.align_score < self.sec_scoring_threshold:
                             c["Invalid secondary alignments"] += 1
 
                         # Filter out secondary alignments based on minimap alignment length
-                        elif self.scoring_value == "alignment_length" and alignment.align_len / best_alignment.align_len < self.equivalent_threshold:
+                        elif self.sec_scoring_value == "alignment_length" and alignment.align_len / best_alignment.align_len < self.sec_scoring_threshold:
                             c["Invalid secondary alignments"] += 1
 
                         # Select valid secondary alignments

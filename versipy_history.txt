@@ -10,4 +10,5 @@
 2021-07-21 11:11:11.160125	0.2.6	Update default filtering options (non-retro-compatible)
 2021-08-17 10:10:41.138197	0.2.6.post1	update documentation
 2021-08-20 09:54:20.527218	0.2.6.post2	update documentation
-2021-08-20 10:18:59.321034	0.2.6.post3	update documentation
+2021-08-20 12:27:48.965330	0.3.0.dev1	Various fixes and improvments
+2021-08-24 09:47:00.310921	0.3.0.dev2	Fix secondary alignments length issue

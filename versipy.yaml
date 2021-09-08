@@ -1,12 +1,12 @@
 version:
   major: 0
-  minor: 2
-  micro: 6
+  minor: 3
+  micro: 0
   a: null
   b: null
   rc: null
-  post: 3
-  dev: null
+  post: null
+  dev: 2
 managed_values:
   __package_name__: NanoCount
   __package_description__: NanoCount estimates transcripts abundance from Oxford Nanopore
