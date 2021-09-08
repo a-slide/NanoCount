@@ -31,7 +31,7 @@ class NanoCount:
         convergence_target: float = 0.005,
         max_em_rounds: int = 100,
         extra_tx_info: bool = False,
-        primary_score: str = "primary",
+        primary_score: str = "alignment_score",
         max_dist_3_prime: int = 50,
         max_dist_5_prime: int = -1,
         verbose: bool = False,
@@ -40,7 +40,7 @@ class NanoCount:
         """
         Estimate abundance of transcripts using an EM
         * alignment_file
-            BAM or SAM file containing aligned ONT dRNA-Seq reads including secondary and supplementary alignment
+            Sorted and indexed BAM or SAM file containing aligned ONT dRNA-Seq reads including secondary alignments
         * count_file
             Output file path where to write estimated counts (TSV format)
         * filter_bam_out
@@ -61,14 +61,14 @@ class NanoCount:
         * extra_tx_info
             Add transcripts length and zero coverage transcripts to the output file (required valid bam/sam header)
         * primary_score
-            Method to pick the best alignment for each read. By default ("primary") it uses the primary read defined by the aligner but it can be changed to
-            use either the best alignment score ("align_score") or the best alignment length ("align_len"). choices = [primary, align_score, align_len]
+            Method to pick the best alignment for each read. By default ("alignment_score") uses the best alignment score (AS optional field), but it can be changed to
+            use either the primary alignment defined by the aligner ("primary") or the longest alignment ("alignment_length"). choices = [primary, alignment_score, alignment_length]
         * keep_suplementary
-            Retain any supplementary alignment and considered them like secondary alignments. discarded by default.
+            Retain any supplementary alignments and considered them like secondary alignments. Discarded by default.
         * max_dist_3_prime
             Maximum distance of alignment end to 3 prime of transcript. In ONT dRNA-Seq reads are assumed to start from the polyA tail (-1 to deactivate)
         * max_dist_5_prime
-            Maximum distance of alignment start to 5 prime of transcript. In conjunction with max_dist_3_prime it can be used to select near full transcript length reads
+            Maximum distance of alignment start to 5 prime of transcript. In conjunction with max_dist_3_prime it can be used to select near full transcript reads
             only (-1 to deactivate).
         * verbose
             Increase verbosity for QC and debugging

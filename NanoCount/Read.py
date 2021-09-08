@@ -33,11 +33,11 @@ class Read(object):
         return len(self.alignment_list)
 
     # ~~~~~~~~~~~~~~PUBLIC METHODS~~~~~~~~~~~~~~ #
-    def get_best_alignment(self, primary_score="primary"):
+    def get_best_alignment(self, primary_score="alignment_score"):
         primary_alignment_idx = self._get_primary_idx(primary_score=primary_score)
         return self.alignment_list[primary_alignment_idx]
 
-    def get_secondary_alignments_list(self, primary_score="primary"):
+    def get_secondary_alignments_list(self, primary_score="alignment_score"):
         primary_alignment_idx = self._get_primary_idx(primary_score=primary_score)
         return [
             alignment
@@ -52,19 +52,19 @@ class Read(object):
         self.alignment_list.append(alignment)
 
     # ~~~~~~~~~~~~~~PRIVATE METHODS~~~~~~~~~~~~~~ #
-    def _get_primary_idx(self, primary_score="primary"):
+    def _get_primary_idx(self, primary_score="alignment_score"):
         idx = 0
-        if primary_score == "primary":
-            for i, alignment in enumerate(self.alignment_list):
-                if not alignment.secondary:
-                    idx = i
-        elif primary_score == "align_score":
+        if primary_score == "alignment_score":
             best_align_score = -1
             for i, alignment in enumerate(self.alignment_list):
                 if alignment.align_score > best_align_score:
                     best_align_score = alignment.align_score
                     idx = i
-        elif primary_score == "align_len":
+        elif primary_score == "primary":
+            for i, alignment in enumerate(self.alignment_list):
+                if not alignment.secondary:
+                    idx = i
+        elif primary_score == "alignment_length":
             best_align_len = -1
             for i, alignment in enumerate(self.alignment_list):
                 if alignment.align_len > best_align_len:
