@@ -23,6 +23,7 @@ conda activate NanoCount
 ## Dependencies
 
 [Minimap2](https://github.com/lh3/minimap2) is not a direct dependency but is required to generate the BAM alignment required by NanoCount.
+Alternatively, other aligners might be used but NanoCount requires the optional AS flag to be set.
 
 `NanoCount` only relies on a few robustly maintained third party python libraries which are installed together with the software when using pip or conda.
 
