@@ -1,4 +1,4 @@
-# Welcome to NanoCount v0.4.0.post2 documentation
+# Welcome to NanoCount v0.4.0.post3 documentation
 
 [NanoCount](pictures/NanoCount.png)
 
@@ -22,10 +22,11 @@
 
 #### Align reads
 
-Reads must be aligned a transcriptome reference using minimap2 with `-N 10` options to retain up to 10 secondary mappings.
+Reads must be aligned a transcriptome reference using minimap2 with `-p 0 -N 10` options to retain up to 10 secondary mappings without filtering.
+NanoCount will take care of the low score alignments internally.
 
 ```
-minimap2 -t 4 -ax map-ont -N 10 transcriptome.fa.gz reads.fastq.gz | samtools view -bh > aligned_reads.bam
+minimap2 -t 4 -ax map-ont -p 0 -N 10 transcriptome.fa.gz reads.fastq.gz | samtools view -bh > aligned_reads.bam
 ```
 
 #### Estimate transcripts abundance with NanoCount

@@ -15,3 +15,4 @@
 2021-09-08 23:00:54.389463	0.4.0	Change default scoring score and fix issue with secondary alignment
 2021-09-08 23:15:55.956351	0.4.0.post1	minor change to doc
 2021-09-08 23:28:38.629321	0.4.0.post2	minor change to doc
+2021-09-10 17:38:16.670671	0.4.0.post3	minor doc update
