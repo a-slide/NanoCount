@@ -4,8 +4,7 @@
 
 NanoCount is meant to be used with Oxford Nanopore **direct-RNA** sequencing datasets only.
 
-Reads must be aligned a **transcriptome reference** using **[minimap2](https://github.com/lh3/minimap2)** with `-N 10` options to retain up to 10 secondary mappings.
-For highly repetitive transcriptomes, this value can even be increased.
+Reads should be aligned to a **transcriptome reference** using **[minimap2](https://github.com/lh3/minimap2)**. We recommend using the `-N 10` option to retain at least 10 secondary mappings. For highly repetitive transcriptomes, this value can even be increased.
 
 Since we use a transcriptome reference the alignment algorithm does not have to be splice aware.
 
