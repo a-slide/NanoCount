@@ -18,3 +18,4 @@
 2021-09-10 17:38:16.670671	0.4.0.post3	minor doc update
 2021-09-10 19:44:30.726193	0.4.0.post4	minor doc update
 2021-10-26 10:14:30.076292	1.0.0	Release before paper publication in NAR
+2021-10-27 09:39:27.221554	1.0.0.post1	minor doc change
