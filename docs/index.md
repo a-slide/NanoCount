@@ -22,8 +22,7 @@
 
 #### Align reads
 
-Reads must be aligned a transcriptome reference using minimap2 with `-p 0 -N 10` options to retain up to 10 secondary mappings without filtering.
-NanoCount will take care of the low score alignments internally.
+Reads should be aligned to a **transcriptome reference** using **[minimap2](https://github.com/lh3/minimap2)**. We recommend using the `-N 10` option to retain at least 10 secondary mappings
 
 ```
 minimap2 -t 4 -ax map-ont -p 0 -N 10 transcriptome.fa.gz reads.fastq.gz | samtools view -bh > aligned_reads.bam
