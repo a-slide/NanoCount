@@ -5,7 +5,7 @@ version:
   a: null
   b: null
   rc: null
-  post: 2
+  post: 3
   dev: null
 managed_values:
   __package_name__: NanoCount

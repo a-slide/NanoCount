@@ -1,4 +1,4 @@
-{% set version = "1.0.0.post2" %}
+{% set version = "1.0.0.post3" %}
 {% set name = "NanoCount" %}
 
 package:
