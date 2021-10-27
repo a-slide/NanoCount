@@ -1,4 +1,4 @@
-# NanoCount v1.0.0.post1
+# NanoCount v1.0.0.post2
 
 ![NanoCount](./docs/pictures/NanoCount.png)
 
@@ -15,7 +15,7 @@
 
 **NanoCount estimates transcripts abundance from Oxford Nanopore *direct-RNA sequencing* datasets, using an expectation-maximization approach like RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads**
 
-Full documentation is available at https://a-slide.github.io/NanoCount/
+Full documentation is available at https://adrienleger.com/NanoCount/
 
 ---
 
