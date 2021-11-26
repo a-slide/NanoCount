@@ -1,4 +1,4 @@
-# Welcome to NanoCount v1.0.0.post3 documentation
+# Welcome to NanoCount v1.0.0.post4 documentation
 
 [NanoCount](pictures/NanoCount.png)
 
@@ -46,7 +46,7 @@ NanoCount -i aligned_reads.bam -o transcript_counts.tsv
 
 The repository is archived at Zenodo. If you use NanoCount please cite as follow:
 
-Adrien Leger. (2020, January 28). a-slide/NanoCount. Zenodo. https://zenodo.org/badge/latestdoi/142873004
+Josie Gleeson, Adrien Leger, Yair D J Prawer, Tracy A Lane, Paul J Harrison, Wilfried Haerty, Michael B Clark, Accurate expression quantification from nanopore direct RNA sequencing with NanoCount, Nucleic Acids Research, 2021;, gkab1129, https://doi.org/10.1093/nar/gkab1129
 
 ### licence
 

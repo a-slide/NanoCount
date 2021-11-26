@@ -1,4 +1,4 @@
-# NanoCount v1.0.0.post3
+# NanoCount v1.0.0.post4
 
 ![NanoCount](./docs/pictures/NanoCount.png)
 
@@ -15,7 +15,7 @@
 
 **NanoCount estimates transcripts abundance from Oxford Nanopore *direct-RNA sequencing* datasets, using an expectation-maximization approach like RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads**
 
-Full documentation is available at https://adrienleger.com/NanoCount/
+Full documentation is available at https:// a-slide.github.io/nanocount/
 
 ---
 
@@ -33,7 +33,7 @@ Thank you
 
 The repository is archived at Zenodo. If you use NanoCount please cite as follow:
 
-Adrien Leger. (2020, January 28). a-slide/NanoCount. Zenodo. https://zenodo.org/badge/latestdoi/142873004
+Josie Gleeson, Adrien Leger, Yair D J Prawer, Tracy A Lane, Paul J Harrison, Wilfried Haerty, Michael B Clark, Accurate expression quantification from nanopore direct RNA sequencing with NanoCount, Nucleic Acids Research, 2021;, gkab1129, https://doi.org/10.1093/nar/gkab1129
 
 ### licence
 
