@@ -13,7 +13,7 @@ managed_values:
     *direct-RNA sequencing* datasets, using an expectation-maximization approach like
     RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads
   __package_url__: https://github.com/a-slide/NanoCount/
-  __package_doc_url__: https://adrienleger.com/NanoCount/
+  __package_doc_url__: https:// a-slide.github.io/nanocount/
   __author_name__: Adrien Leger
   __author_email__: aleg@ebi.ac.uk
   __author_url__: https://adrienleger.com
@@ -31,7 +31,7 @@ managed_values:
   __classifiers_3__: 'Topic :: Scientific/Engineering :: Bio-Informatics'
   __classifiers_4__: 'License :: OSI Approved :: MIT License'
   __classifiers_5__: 'Programming Language :: Python :: 3'
-  __citation__: Adrien Leger. (2020, January 28). a-slide/NanoCount. Zenodo. https://zenodo.org/badge/latestdoi/142873004
+  __citation__: Josie Gleeson, Adrien Leger, Yair D J Prawer, Tracy A Lane, Paul J Harrison, Wilfried Haerty, Michael B Clark, Accurate expression quantification from nanopore direct RNA sequencing with NanoCount, Nucleic Acids Research, 2021;, gkab1129, https://doi.org/10.1093/nar/gkab1129
 managed_files:
   .versipy/setup.py: setup.py
   .versipy/meta.yaml: meta.yaml
