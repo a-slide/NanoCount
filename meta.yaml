@@ -1,4 +1,4 @@
-{% set version = "1.0.0.post5" %}
+{% set version = "1.0.0.post6" %}
 {% set name = "NanoCount" %}
 
 package:
@@ -35,7 +35,7 @@ test:
 
 about:
   home: https://github.com/a-slide/NanoCount/
-  doc_url: https://a-slide.github.io/nanocount/
+  doc_url: https://a-slide.github.io/NanoCount/
   license: MIT
   licence_url: https://mit-license.org/
   summary: NanoCount estimates transcripts abundance from Oxford Nanopore *direct-RNA sequencing* datasets, using an expectation-maximization approach like RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads

@@ -2,7 +2,7 @@
 site_name: NanoCount
 site_description: NanoCount estimates transcripts abundance from Oxford Nanopore *direct-RNA sequencing* datasets, using an expectation-maximization approach like RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads
 site_author: Adrien Leger
-site_url: https://a-slide.github.io/nanocount/
+site_url: https://a-slide.github.io/NanoCount/
 
 # Repository
 repo_name: 'a-slide/NanoCount'
