@@ -13,7 +13,7 @@ managed_values:
     *direct-RNA sequencing* datasets, using an expectation-maximization approach like
     RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads
   __package_url__: https://github.com/a-slide/NanoCount/
-  __package_doc_url__: https:// a-slide.github.io/nanocount/
+  __package_doc_url__: https://a-slide.github.io/nanocount/
   __author_name__: Adrien Leger
   __author_email__: aleg@ebi.ac.uk
   __author_url__: https://adrienleger.com
