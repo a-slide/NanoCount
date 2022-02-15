@@ -67,7 +67,7 @@ class NanoCount:
         * keep_suplementary
             Retain any supplementary alignments and considered them like secondary alignments. Discarded by default.
         * keep_neg_strand
-            Retain reands mapped on the negative strand. This option is experimental for cDNASeq and should never be used for dRNA seq
+            Retain alignments mapped on the negative strand. This option is experimental for cDNASeq and should never be used for dRNA seq
         * max_dist_3_prime
             Maximum distance of alignment end to 3 prime of transcript. In ONT dRNA-Seq reads are assumed to start from the polyA tail (-1 to deactivate)
         * max_dist_5_prime
