@@ -25,6 +25,7 @@ class NanoCount:
         filter_bam_out: str = "",
         min_alignment_length: int = 50,
         keep_suplementary: bool = False,
+        keep_neg_strand: bool = False,
         min_query_fraction_aligned: float = 0.5,
         sec_scoring_threshold: float = 0.95,
         sec_scoring_value: str = "alignment_score",
@@ -65,6 +66,8 @@ class NanoCount:
             use either the primary alignment defined by the aligner ("primary") or the longest alignment ("alignment_length"). choices = [primary, alignment_score, alignment_length]
         * keep_suplementary
             Retain any supplementary alignments and considered them like secondary alignments. Discarded by default.
+        * keep_neg_strand
+            Retain reands mapped on the negative strand. This option is experimental for cDNASeq and should never be used for dRNA seq
         * max_dist_3_prime
             Maximum distance of alignment end to 3 prime of transcript. In ONT dRNA-Seq reads are assumed to start from the polyA tail (-1 to deactivate)
         * max_dist_5_prime
@@ -96,6 +99,7 @@ class NanoCount:
         self.extra_tx_info = extra_tx_info
         self.primary_score = primary_score
         self.keep_suplementary = keep_suplementary
+        self.keep_neg_strand = keep_neg_strand
         self.max_dist_5_prime = max_dist_5_prime
         self.max_dist_3_prime = max_dist_3_prime
 
@@ -185,7 +189,7 @@ class NanoCount:
             for idx, alignment in enumerate(bam):
                 if alignment.is_unmapped:
                     c["Discarded unmapped alignments"] += 1
-                elif alignment.is_reverse:
+                elif not self.keep_neg_strand and alignment.is_reverse:
                     c["Discarded negative strand alignments"] += 1
                 elif not self.keep_suplementary and alignment.is_supplementary:
                     c["Discarded supplementary alignments"] += 1
