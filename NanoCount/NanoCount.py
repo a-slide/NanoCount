@@ -64,7 +64,7 @@ class NanoCount:
         * primary_score
             Method to pick the best alignment for each read. By default ("alignment_score") uses the best alignment score (AS optional field), but it can be changed to
             use either the primary alignment defined by the aligner ("primary") or the longest alignment ("alignment_length"). choices = [primary, alignment_score, alignment_length]
-        * keep_suplementary
+        * keep_supplementary
             Retain any supplementary alignments and considered them like secondary alignments. Discarded by default.
         * keep_neg_strand
             Retain alignments mapped on the negative strand. This option is experimental for cDNASeq and should never be used for dRNA seq
@@ -98,7 +98,7 @@ class NanoCount:
         self.max_em_rounds = max_em_rounds
         self.extra_tx_info = extra_tx_info
         self.primary_score = primary_score
-        self.keep_suplementary = keep_suplementary
+        self.keep_supplementary = keep_supplementary
         self.keep_neg_strand = keep_neg_strand
         self.max_dist_5_prime = max_dist_5_prime
         self.max_dist_3_prime = max_dist_3_prime
