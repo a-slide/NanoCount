@@ -108,6 +108,9 @@ Misc options:
   -n, --keep_neg_strand
                         Retain negative strand alignments for ONT cDNA data. 
                         Un-tested and not benchmarked. Use with caution.
+                        If using for cDNA, either deactivate 3 prime end filtering, or enable both 
+                        3 prime and 5 prime filtering. cDNA does not only begin at 3 prime 
+                        ends as it does with direct RNA. 
                         (default: False) [boolean]
   -d MAX_DIST_3_PRIME, --max_dist_3_prime MAX_DIST_3_PRIME
                         Maximum distance of alignment end to 3 prime of
