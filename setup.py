@@ -11,7 +11,7 @@ with open("README.md", "r") as fh:
 setup(
     name="NanoCount",
     description="NanoCount estimates transcripts abundance from Oxford Nanopore *direct-RNA sequencing* datasets, using an expectation-maximization approach like RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads",
-    version="1.0.0.post6",
+    version="1.1.0",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/a-slide/NanoCount/",
