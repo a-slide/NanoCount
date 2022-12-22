@@ -191,7 +191,7 @@ class NanoCount:
                     c["Discarded unmapped alignments"] += 1
                 elif not self.keep_neg_strand and alignment.is_reverse:
                     c["Discarded negative strand alignments"] += 1
-                elif not self.keep_suplementary and alignment.is_supplementary:
+                elif not self.keep_supplementary and alignment.is_supplementary:
                     c["Discarded supplementary alignments"] += 1
                 elif self.min_alignment_length > 0 and alignment.query_alignment_length < self.min_alignment_length:
                     c["Discarded short alignments"] += 1
