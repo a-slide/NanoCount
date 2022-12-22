@@ -34,7 +34,7 @@ def main(args=None):
     arg_from_docstr(parser=parser_ms, func=nc, arg_name="max_em_rounds", short_name="e")
     arg_from_docstr(parser=parser_ms, func=nc, arg_name="extra_tx_info", short_name="x")
     arg_from_docstr(parser=parser_ms, func=nc, arg_name="primary_score", short_name="p")
-    arg_from_docstr(parser=parser_ms, func=nc, arg_name="keep_suplementary", short_name="a")
+    arg_from_docstr(parser=parser_ms, func=nc, arg_name="keep_supplementary", short_name="a")
     arg_from_docstr(parser=parser_ms, func=nc, arg_name="keep_neg_strand", short_name="n")
     arg_from_docstr(parser=parser_ms, func=nc, arg_name="max_dist_3_prime", short_name="d")
     arg_from_docstr(parser=parser_ms, func=nc, arg_name="max_dist_5_prime", short_name="u")
