@@ -24,7 +24,7 @@ class NanoCount:
         count_file: str = "",
         filter_bam_out: str = "",
         min_alignment_length: int = 50,
-        keep_suplementary: bool = False,
+        keep_supplementary: bool = False,
         keep_neg_strand: bool = False,
         min_query_fraction_aligned: float = 0.5,
         sec_scoring_threshold: float = 0.95,
