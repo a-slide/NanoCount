@@ -15,6 +15,8 @@
 
 Further documentation is available at: https://a-slide.github.io/NanoCount/
 
+**NanoCount is designed for Oxford Nanopore direct RNA sequencing datasets only, it was not designed or tested for quantification of cDNA datasets**
+
 ---
 
 ### Installation
@@ -166,6 +168,10 @@ Optionally, users can choose to output the alignments that pass NanoCount's filt
 If you use NanoCount please cite as follows:
 
 Josie Gleeson, Adrien Leger, Yair D J Prawer, Tracy A Lane, Paul J Harrison, Wilfried Haerty, Michael B Clark, Accurate expression quantification from nanopore direct RNA sequencing with NanoCount, Nucleic Acids Research, Volume 50, Issue 4, 28 February 2022, Page e19, https://doi.org/10.1093/nar/gkab1129
+
+### Use on cDNA datasets
+
+NanoCount was not designed for, or tested on, cDNA datasets during development and we do not recommend using NanoCount for this purpose. If you want to quantify cDNA we recommend use of alternative tools. If, despite this, you use NanoCount on cDNA, ensure you deactivate the 3' end filter (-d MAX_DIST_3_PRIME) and specify -n (--keep_neg_strand) to retain negative strand alignments. Otherwise you will be running NanoCount with direct RNA specific parameters that are highly likely to cause poor performance on cDNA.
 
 ### Disclaimers
 
