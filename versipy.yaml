@@ -5,7 +5,7 @@ version:
   a: null
   b: null
   rc: null
-  post: null
+  post: 1
   dev: null
 managed_values:
   __package_name__: NanoCount
@@ -37,7 +37,6 @@ managed_values:
     gkab1129, https://doi.org/10.1093/nar/gkab1129
 managed_files:
   .versipy/setup.py: setup.py
-  .versipy/meta.yaml: meta.yaml
   .versipy/__init__.py: NanoCount/__init__.py
   .versipy/README.md: README.md
   .versipy/mkdocs.yml: mkdocs.yml

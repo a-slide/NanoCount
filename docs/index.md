@@ -1,4 +1,4 @@
-# Welcome to NanoCount v1.0.0.post6 documentation
+# Welcome to NanoCount v1.1.0.post1 documentation
 
 [NanoCount](pictures/NanoCount.png)
 
@@ -14,7 +14,7 @@
 
 ---
 
-**NanoCount estimates transcript abundances from Oxford Nanopore direct RNA sequencing datasets, using filtering steps and an expectation-maximization approach (similar to RSEM, Kallisto, Salmon, etc) to handle the uncertainty of multi-mapping reads**
+**NanoCount estimates transcripts abundance from Oxford Nanopore *direct-RNA sequencing* datasets, using an expectation-maximization approach like RSEM, Kallisto, salmon, etc to handle the uncertainty of multi-mapping reads**
 
 ---
 
@@ -23,7 +23,7 @@
 #### Align reads
 
 Reads should be aligned to a **transcriptome reference** using **[minimap2](https://github.com/lh3/minimap2)**.
-We recommend adding the `-N 10` option to retain at least 10 secondary mappings.
+We recommend using the `-N 10` option to retain at least 10 secondary mappings.
 
 ```
 minimap2 -t 4 -ax map-ont -p 0 -N 10 transcriptome.fa.gz reads.fastq.gz | samtools view -bh > aligned_reads.bam
@@ -42,13 +42,13 @@ NanoCount -i aligned_reads.bam -o transcript_counts.tsv
 * [Python API Usage](NanoCount_API_usage)
 * [Input / Output formats](nanocount_io)
 
-### Citation
+### citation
 
-The repository is archived at Zenodo. If you use NanoCount please cite as follows:
+The repository is archived at Zenodo. If you use NanoCount please cite as follow:
 
-Josie Gleeson, Adrien Leger, Yair D J Prawer, Tracy A Lane, Paul J Harrison, Wilfried Haerty, Michael B Clark, Accurate expression quantification from nanopore direct RNA sequencing with NanoCount, Nucleic Acids Research, Volume 50, Issue 4, 28 February 2022, Page e19, https://doi.org/10.1093/nar/gkab1129
+Josie Gleeson, Adrien Leger, Yair D J Prawer, Tracy A Lane, Paul J Harrison, Wilfried Haerty, Michael B Clark, Accurate expression quantification from nanopore direct RNA sequencing with NanoCount, Nucleic Acids Research, 2021;, gkab1129, https://doi.org/10.1093/nar/gkab1129
 
-### Licence
+### licence
 
 MIT (https://mit-license.org/)
 

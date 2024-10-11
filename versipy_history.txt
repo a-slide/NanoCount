@@ -24,3 +24,4 @@
 2021-11-26 09:01:25.733973	1.0.0.post4	Update citation
 2021-11-26 09:04:25.525718	1.0.0.post5	Update citation
 2021-11-26 09:45:17.149248	1.0.0.post6	Update citation
+2024-10-11 12:35:42.309758	1.1.0.post1	Update version and add deployment to pypi with gh actions
